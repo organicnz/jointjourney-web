@@ -1,65 +1,54 @@
-import Image from "next/image";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden bg-background">
+      {/* Background gradients */}
+      <div className="absolute inset-0 -z-10 h-full w-full bg-white dark:bg-black bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:16px_16px]">
+        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,#c7d2fe,transparent)] dark:bg-[radial-gradient(circle_500px_at_50%_200px,#3730a3,transparent)]"></div>
+      </div>
+
+      <div className="container px-4 md:px-6 flex flex-col items-center text-center space-y-8 py-24 mx-auto z-10 mt-12">
+        <div className="space-y-4 max-w-3xl">
+          <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight text-foreground bg-clip-text">
+            Embark on your next <br className="hidden sm:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">
+              JointJourney
+            </span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mx-auto max-w-[700px] text-lg sm:text-xl text-muted-foreground font-medium">
+            Connect, collaborate, and achieve your goals together. Our platform empowers you to coordinate seamlessly with your team.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="space-x-4">
+          <Link href="/login" className={cn(buttonVariants({ size: "lg" }), "rounded-full px-8 shadow-lg shadow-indigo-500/20")}>
+            Get Started for Free
+          </Link>
+          <Link href="#features" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "rounded-full px-8")}>
+            Learn More
+          </Link>
         </div>
-      </main>
+      </div>
+      
+      {/* Decorative glass panels or feature cards could go here */}
+      <div className="container mx-auto px-4 md:px-6 pb-24 mt-12" id="features">
+         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="p-6 rounded-3xl bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md border border-black/5 dark:border-white/5 shadow-2xl transition-transform hover:-translate-y-1">
+               <h3 className="font-semibold text-lg mb-2">Real-time Collaboration</h3>
+               <p className="text-muted-foreground text-sm leading-relaxed">Work together with your team in real-time, no matter where you are. Instantly see updates and keep everyone aligned.</p>
+            </div>
+            <div className="p-6 rounded-3xl bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md border border-black/5 dark:border-white/5 shadow-2xl transition-transform hover:-translate-y-1">
+               <h3 className="font-semibold text-lg mb-2">Secure & Private</h3>
+               <p className="text-muted-foreground text-sm leading-relaxed">Your data is secured by enterprise-grade encryption and powered by Supabase Auth for complete peace of mind.</p>
+            </div>
+            <div className="p-6 rounded-3xl bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md border border-black/5 dark:border-white/5 shadow-2xl transition-transform hover:-translate-y-1">
+               <h3 className="font-semibold text-lg mb-2">Lightning Fast</h3>
+               <p className="text-muted-foreground text-sm leading-relaxed">Built on the Next.js App Router for optimal performance, giving you an instantaneous and smooth user experience.</p>
+            </div>
+         </div>
+      </div>
     </div>
   );
 }
