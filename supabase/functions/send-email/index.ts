@@ -26,7 +26,8 @@ serve(async (req) => {
     // Construct URL based on whether token_hash (PKCE) or token (Implicit) is provided
     let verifyUrl = `${supabaseUrl}/auth/v1/verify?type=${email_action_type}&redirect_to=${encodeURIComponent(redirect_to)}`
     if (token_hash) {
-      verifyUrl += `&token_hash=${token_hash}`
+      // CRITICAL: The URL query parameter MUST be named `token` even if the value is a PKCE `token_hash`.
+      verifyUrl += `&token=${token_hash}`
     } else if (token) {
       verifyUrl += `&token=${token}`
     }
