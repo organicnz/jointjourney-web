@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { motion } from "framer-motion"
 import { sendAdminEmailAction } from "@/app/admin/actions"
 import { toast } from "sonner"
@@ -29,9 +29,41 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
     toast.success("Template applied")
   }
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
   const insertTag = (tag: string) => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const selectedText = message.substring(start, end)
     const isSelfClosing = tag === 'br' || tag === 'hr'
-    setMessage(prev => `${prev}${isSelfClosing ? `<${tag}/>` : `<${tag}></${tag.split(' ')[0]}>`}`)
+
+    let newText = ''
+    let newCursorPos = 0
+
+    if (isSelfClosing) {
+      const insertion = `<${tag}/>`
+      newText = message.substring(0, start) + insertion + message.substring(end)
+      newCursorPos = start + insertion.length
+    } else {
+      const openingTag = `<${tag}>`
+      const closingTag = `</${tag.split(' ')[0]}>`
+      newText = message.substring(0, start) + openingTag + selectedText + closingTag + message.substring(end)
+      // If there was selected text, put cursor after the closing tag. Otherwise, put it inside the tags.
+      newCursorPos = selectedText.length > 0 
+        ? start + openingTag.length + selectedText.length + closingTag.length
+        : start + openingTag.length
+    }
+
+    setMessage(newText)
+    
+    // Ensure the textarea retains focus and the cursor moves to the right spot after state updates
+    setTimeout(() => {
+      textarea.focus()
+      textarea.setSelectionRange(newCursorPos, newCursorPos)
+    }, 0)
   }
 
   const handleSendEmail = async (e: React.FormEvent) => {
@@ -122,6 +154,8 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
             </div>
             
             <textarea
+              id="message"
+              ref={textareaRef}
               value={message}
               onChange={e => setMessage(e.target.value)}
               className="w-full h-[240px] p-4 bg-transparent border-none focus:outline-none resize-none text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 leading-relaxed"
