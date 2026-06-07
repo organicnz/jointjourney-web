@@ -12,7 +12,7 @@ import {
   CommandShortcut
 } from "@/components/ui/command"
 import { UserData } from "./types"
-import { User, Mail, Download, LayoutList, KanbanSquare, CheckCircle2, ShieldAlert } from "lucide-react"
+import { User, Mail, Download, LayoutList, KanbanSquare, CheckCircle2, LayoutDashboard, Activity, Users } from "lucide-react"
 
 export function CRMCommandPalette({
   users,
@@ -25,7 +25,8 @@ export function CRMCommandPalette({
   openUserProfile: (user: UserData) => void,
   exportToCSV: () => void,
   setViewMode: (mode: 'list' | 'kanban') => void,
-  selectAll: () => void
+  selectAll: () => void,
+  setActiveTab: (tab: 'overview' | 'contacts' | 'campaigns' | 'activity') => void
 }) {
   const [open, setOpen] = useState(false)
 
@@ -81,9 +82,28 @@ export function CRMCommandPalette({
             </CommandItem>
           </CommandGroup>
 
+          <CommandGroup heading="Navigation">
+            <CommandItem onSelect={() => { setActiveTab('overview'); setOpen(false) }} className="cursor-pointer">
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              <span>Go to Overview</span>
+            </CommandItem>
+            <CommandItem onSelect={() => { setActiveTab('contacts'); setOpen(false) }} className="cursor-pointer">
+              <Users className="mr-2 h-4 w-4" />
+              <span>Go to Contacts & Pipeline</span>
+            </CommandItem>
+            <CommandItem onSelect={() => { setActiveTab('campaigns'); setOpen(false) }} className="cursor-pointer">
+              <Mail className="mr-2 h-4 w-4" />
+              <span>Go to Campaigns</span>
+            </CommandItem>
+            <CommandItem onSelect={() => { setActiveTab('activity'); setOpen(false) }} className="cursor-pointer">
+              <Activity className="mr-2 h-4 w-4" />
+              <span>Go to Activity Logs</span>
+            </CommandItem>
+          </CommandGroup>
+
           <CommandSeparator />
 
-          <CommandGroup heading="Views">
+          <CommandGroup heading="Views (Contacts)">
             <CommandItem onSelect={() => { setViewMode('list'); setOpen(false) }} className="cursor-pointer">
               <LayoutList className="mr-2 h-4 w-4" />
               <span>Switch to List View</span>

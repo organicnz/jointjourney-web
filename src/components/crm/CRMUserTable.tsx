@@ -134,19 +134,14 @@ export function CRMUserTable({
                   </TableCell>
                 </MotionTableRow>
               ) : paginatedUsers.length === 0 ? (
-                <MotionTableRow 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="border-none"
-                >
-                  <TableCell colSpan={6} className="h-64 border-none">
-                    <div className="flex flex-col items-center justify-center text-gray-400">
-                      <div className="w-16 h-16 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-white/40 dark:border-gray-700/50">
-                        <Ghost className="h-8 w-8 text-gray-400 dark:text-gray-500" />
+                <MotionTableRow>
+                  <TableCell colSpan={6} className="h-96 text-center border-none">
+                    <div className="flex flex-col items-center justify-center p-8 bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-3xl max-w-md mx-auto">
+                      <div className="w-16 h-16 bg-blue-100/50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-6 shadow-inner border border-white/50 dark:border-blue-800/50">
+                        <Users className="h-8 w-8 text-blue-500 dark:text-blue-400" />
                       </div>
-                      <p className="font-semibold text-gray-900 dark:text-gray-100 mb-1">No users found</p>
-                      <p className="text-sm">Try adjusting your segment or search query.</p>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">No Users Found</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium leading-relaxed">We couldn't find anyone matching your current search or filters. Try adjusting your criteria or clear filters to see the full directory.</p>
                     </div>
                   </TableCell>
                 </MotionTableRow>
