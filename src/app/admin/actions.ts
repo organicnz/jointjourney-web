@@ -144,7 +144,7 @@ export async function sendAdminEmailAction(userIds: string[], subject: string, m
           ${message}
         </div>
         <div class="footer">
-          You are receiving this email because you are a registered member of JointJourney.
+          You are receiving this email from JointJourney.
         </div>
       </div>
     </body>
