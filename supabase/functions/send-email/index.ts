@@ -18,8 +18,8 @@ serve(async (req) => {
 
     let { token, token_hash, redirect_to, email_action_type, site_url } = email_data
 
-    // Bulletproof Redirect Overwrite: Ignore Supabase Dashboard Configuration
-    redirect_to = "https://jointjourney.app/auth/callback"
+    // Use site_url from the auth payload (set via Supabase Dashboard "Site URL" config)
+    redirect_to = `${site_url}/auth/callback`
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") as string
     
@@ -168,7 +168,7 @@ serve(async (req) => {
         "Authorization": `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: "JointJourney <contact@jointjourney.app>",
+        from: Deno.env.get("SENDER_EMAIL") || `JointJourney <noreply@${new URL(Deno.env.get("SUPABASE_URL") as string).hostname}>`,
         to: [user.email],
         subject: subject,
         html: htmlContent

@@ -15,7 +15,7 @@ export async function signInWithMagicLink(formData: FormData) {
     email,
     options: {
       shouldCreateUser: true,
-      emailRedirectTo: `https://jointjourney.app/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
     },
   })
 
