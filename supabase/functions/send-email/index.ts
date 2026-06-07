@@ -48,72 +48,85 @@ serve(async (req) => {
       <style>
         body {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-          background-color: #f3f4f6;
+          background-color: #0f172a;
           margin: 0;
           padding: 0;
+          color: #f8fafc;
         }
         .container {
           max-width: 600px;
           margin: 40px auto;
-          background-color: #ffffff;
-          border-radius: 12px;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          background-color: #1e293b;
+          border: 1px solid #334155;
+          border-radius: 24px;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
           overflow: hidden;
         }
         .header {
-          background-color: #111827;
-          color: #ffffff;
+          background: linear-gradient(135deg, #1e3a8a, #172554);
           padding: 30px 40px;
           text-align: center;
+          border-bottom: 1px solid #334155;
         }
         .header h1 {
           margin: 0;
-          font-size: 24px;
-          font-weight: 700;
-          letter-spacing: -0.025em;
+          font-size: 26px;
+          font-weight: 800;
+          letter-spacing: -0.5px;
+          color: #ffffff;
         }
         .content {
           padding: 40px;
           text-align: center;
         }
+        .content h2 {
+          color: #f8fafc;
+          font-size: 22px;
+          font-weight: 700;
+          margin-top: 0;
+          margin-bottom: 16px;
+        }
         .content p {
-          color: #4b5563;
+          color: #94a3b8;
           font-size: 16px;
-          line-height: 1.5;
-          margin-bottom: 30px;
+          line-height: 1.6;
+          margin-bottom: 32px;
         }
         .button {
           display: inline-block;
-          background-color: #111827;
+          background: linear-gradient(135deg, #2563eb, #1d4ed8);
           color: #ffffff !important;
           font-weight: 600;
           text-decoration: none;
-          padding: 14px 32px;
-          border-radius: 8px;
+          padding: 16px 32px;
+          border-radius: 12px;
           font-size: 16px;
-          transition: background-color 0.2s;
+          box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+          transition: transform 0.2s;
         }
         .button:hover {
-          background-color: #374151;
+          background: linear-gradient(135deg, #3b82f6, #2563eb);
         }
         .footer {
-          background-color: #f9fafb;
-          padding: 20px 40px;
+          background-color: #0f172a;
+          padding: 24px 40px;
           text-align: center;
-          color: #9ca3af;
-          font-size: 14px;
-          border-top: 1px solid #f3f4f6;
+          color: #64748b;
+          font-size: 13px;
+          border-top: 1px solid #334155;
         }
         .code {
-          background: #f3f4f6;
-          padding: 12px 24px;
-          border-radius: 8px;
-          font-size: 24px;
-          font-weight: bold;
-          letter-spacing: 4px;
-          color: #111827;
-          margin: 20px 0;
+          background: #0f172a;
+          border: 1px solid #334155;
+          padding: 16px 24px;
+          border-radius: 12px;
+          font-size: 28px;
+          font-weight: 800;
+          letter-spacing: 6px;
+          color: #38bdf8;
+          margin: 24px 0;
           display: inline-block;
+          box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
         }
       </style>
     </head>
@@ -123,14 +136,15 @@ serve(async (req) => {
           <h1>JointJourney</h1>
         </div>
         <div class="content">
-          <h2 style="color: #111827; font-size: 20px; font-weight: 600; margin-top: 0;">${subject}</h2>
+          <h2>${subject}</h2>
           <p>${description}</p>
           <a href="${verifyUrl}" class="button">${actionText}</a>
-          <p style="margin-top: 40px; margin-bottom: 10px; font-size: 14px;">Or enter this code manually:</p>
+          <p style="margin-top: 48px; margin-bottom: 12px; font-size: 14px; color: #64748b;">Or enter this verification code manually:</p>
           <div class="code">${token}</div>
         </div>
         <div class="footer">
-          If you didn't request this email, you can safely ignore it.
+          If you didn't request this email, you can safely ignore it.<br>
+          <span style="margin-top: 8px; display: block; font-size: 12px; color: #475569;">Powered by JointJourney Secure Auth &copy; 2026</span>
         </div>
       </div>
     </body>
