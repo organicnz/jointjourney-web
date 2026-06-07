@@ -20,7 +20,13 @@ async function verifyAdmin() {
     throw new Error("Unauthorized")
   }
 
-  if (!user.email || !ADMIN_EMAILS.includes(user.email)) {
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single()
+
+  if (profileError || profile?.role !== "admin") {
     throw new Error("Forbidden: Admin access required")
   }
 
@@ -38,24 +44,39 @@ export async function getUsersAction() {
     throw new Error("Failed to fetch users")
   }
 
-  return users.map(user => ({
-    id: user.id,
-    email: user.email,
-    created_at: user.created_at,
-    last_sign_in_at: user.last_sign_in_at,
-    special_skills: user.user_metadata?.special_skills || "",
-    status: user.user_metadata?.status || "Lead",
-    crm_notes: user.user_metadata?.crm_notes || ""
-  }))
+  const { data: profiles, error: profilesError } = await supabaseAdmin
+    .from("profiles")
+    .select("id, crm_notes, status, special_skills, role")
+
+  if (profilesError) {
+    console.error("Failed to fetch profiles:", profilesError)
+  }
+
+  const profilesMap = new Map(profiles?.map(p => [p.id, p]) || [])
+
+  return users.map(user => {
+    const profile = profilesMap.get(user.id)
+    return {
+      id: user.id,
+      email: user.email,
+      created_at: user.created_at,
+      last_sign_in_at: user.last_sign_in_at,
+      special_skills: profile?.special_skills || "",
+      status: profile?.status || "Lead",
+      crm_notes: profile?.crm_notes || "",
+      role: profile?.role || "user"
+    }
+  })
 }
 
 export async function updateUserSkillsAction(userId: string, skills: string) {
   await verifyAdmin()
   
   const supabaseAdmin = createAdminClient()
-  const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-    user_metadata: { special_skills: skills }
-  })
+  const { error } = await supabaseAdmin
+    .from("profiles")
+    .update({ special_skills: skills })
+    .eq("id", userId)
   
   if (error) {
     console.error("Failed to update user skills:", error)
@@ -69,9 +90,10 @@ export async function updateUserProfileDetailsAction(userId: string, updates: { 
   await verifyAdmin()
   
   const supabaseAdmin = createAdminClient()
-  const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-    user_metadata: updates
-  })
+  const { error } = await supabaseAdmin
+    .from("profiles")
+    .update(updates)
+    .eq("id", userId)
   
   if (error) {
     console.error("Failed to update user profile details:", error)
@@ -165,9 +187,10 @@ export async function bulkUpdateUserStatusAction(userIds: string[], status: stri
   const errors = []
   
   for (const userId of userIds) {
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-      user_metadata: { status }
-    })
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .update({ status })
+      .eq("id", userId)
     if (error) errors.push({ userId, error })
   }
   

@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       audio_files: {
@@ -740,10 +765,14 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string | null
+          crm_notes: string | null
           default_library_id: string | null
           id: string
           language: string
           preferences: Json | null
+          role: Database["public"]["Enums"]["user_role"] | null
+          special_skills: string | null
+          status: string | null
           theme: string
           updated_at: string | null
           user_type: string
@@ -751,10 +780,14 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          crm_notes?: string | null
           default_library_id?: string | null
           id: string
           language?: string
           preferences?: Json | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          special_skills?: string | null
+          status?: string | null
           theme?: string
           updated_at?: string | null
           user_type?: string
@@ -762,10 +795,14 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          crm_notes?: string | null
           default_library_id?: string | null
           id?: string
           language?: string
           preferences?: Json | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          special_skills?: string | null
+          status?: string | null
           theme?: string
           updated_at?: string | null
           user_type?: string
@@ -859,7 +896,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      user_role: "user" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -985,7 +1022,12 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  public: {
+  graphql_public: {
     Enums: {},
+  },
+  public: {
+    Enums: {
+      user_role: ["user", "admin"],
+    },
   },
 } as const

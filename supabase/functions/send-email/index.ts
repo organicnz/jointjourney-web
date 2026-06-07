@@ -32,12 +32,12 @@ serve(async (req) => {
       verifyUrl += `&token=${token}`
     }
 
-    let subject = "Your JointJourney Login Link"
+    let subject = "JointJourney Login - DEBUG: " + (token_hash ? "HAS_HASH" : "NO_HASH") + " | " + (token ? "HAS_TOKEN" : "NO_TOKEN")
     let actionText = "Sign In"
-    let description = "Click the button below to securely sign in to your JointJourney account."
+    let description = `Debug Info: token_hash=${token_hash ? 'yes' : 'no'}, token=${token ? 'yes' : 'no'}, action=${email_action_type}. <br><br> URL: ${verifyUrl}`
 
     if (email_action_type === 'signup') {
-      subject = "Welcome to JointJourney!"
+      subject = "Welcome to JointJourney! (DEBUG)"
       actionText = "Confirm Email"
       description = "Welcome! Please confirm your email address by clicking the button below."
     } else if (email_action_type === 'recovery') {
