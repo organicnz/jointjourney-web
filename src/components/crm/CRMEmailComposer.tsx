@@ -12,6 +12,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<string>, onSent: () => void }) {
+  const [manualEmails, setManualEmails] = useState("")
   const [subject, setSubject] = useState("")
   const [message, setMessage] = useState("")
   const [sending, setSending] = useState(false)
@@ -68,8 +69,14 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
 
   const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (selectedIds.size === 0) {
-      setFeedback({ type: 'error', text: "Please select at least one user." })
+    
+    const customEmailList = manualEmails
+      .split(',')
+      .map(e => e.trim())
+      .filter(e => e.length > 0 && e.includes('@'))
+
+    if (selectedIds.size === 0 && customEmailList.length === 0) {
+      setFeedback({ type: 'error', text: "Please select users or enter an email address." })
       return
     }
     if (!subject || !message || message.trim() === '') {
@@ -81,10 +88,11 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
     
     try {
       const formattedMessage = message.replace(/\n/g, '<br/>')
-      const res = await sendAdminEmailAction(Array.from(selectedIds), subject, formattedMessage)
-      toast.success(`Successfully sent email to ${res.count} users!`)
+      const res = await sendAdminEmailAction(Array.from(selectedIds), subject, formattedMessage, customEmailList)
+      toast.success(`Successfully sent email to ${res.count} recipients!`)
       setSubject("")
       setMessage("")
+      setManualEmails("")
       onSent()
     } catch (err: any) {
       toast.error(err.message || "Failed to send email.")
@@ -103,9 +111,9 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
               Broadcast Email
             </CardTitle>
             <CardDescription className="dark:text-gray-400 mt-1">
-              {selectedIds.size === 0 
-                ? "Select users from the table to send emails." 
-                : `Ready to email ${selectedIds.size} users.`}
+              {selectedIds.size === 0 && !manualEmails.trim()
+                ? "Select users or enter emails below." 
+                : `Ready to email recipients.`}
             </CardDescription>
           </div>
           <DropdownMenu>
@@ -129,7 +137,23 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 relative">
+          <Label htmlFor="to" className="text-gray-700 dark:text-gray-300 font-semibold ml-1">To</Label>
+          <Input 
+            id="to" 
+            placeholder="Additional email addresses (comma separated)" 
+            value={manualEmails}
+            onChange={e => setManualEmails(e.target.value)}
+            className="bg-white/80 dark:bg-gray-900/80 border-gray-200/80 dark:border-gray-800 rounded-xl h-12 shadow-sm focus-visible:ring-blue-500/50 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+          />
+          {selectedIds.size > 0 && (
+            <p className="text-xs font-medium text-blue-600 dark:text-blue-400 ml-1 mt-1.5 absolute -bottom-5">
+              + {selectedIds.size} user{selectedIds.size !== 1 ? 's' : ''} selected from directory
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-2 pt-2">
           <Label htmlFor="subject" className="text-gray-700 dark:text-gray-300 font-semibold ml-1">Subject Line</Label>
           <Input 
             id="subject" 
@@ -172,7 +196,7 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
         <Button 
           type="submit" 
           className="h-12 w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl shadow-lg shadow-blue-600/20 dark:shadow-blue-900/40 transition-all duration-300 font-semibold group overflow-hidden relative"
-          disabled={sending || selectedIds.size === 0}
+          disabled={sending || (selectedIds.size === 0 && manualEmails.trim() === '')}
         >
           {sending ? (
             <div className="flex items-center justify-center relative z-10">

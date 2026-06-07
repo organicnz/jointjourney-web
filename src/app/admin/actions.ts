@@ -99,19 +99,27 @@ export async function updateUserProfileDetailsAction(userId: string, updates: { 
   return { success: true }
 }
 
-export async function sendAdminEmailAction(userIds: string[], subject: string, message: string) {
+export async function sendAdminEmailAction(userIds: string[], subject: string, message: string, customEmails: string[] = []) {
   const adminUser = await verifyAdmin()
   
   const supabaseAdmin = createAdminClient()
   
-  // Fetch users to get their emails
-  const { data: { users }, error } = await supabaseAdmin.auth.admin.listUsers()
-  if (error) throw new Error("Failed to fetch user directory")
+  let targetEmails: string[] = [...customEmails]
+
+  // Fetch users to get their emails if userIds are provided
+  if (userIds.length > 0) {
+    const { data: { users }, error } = await supabaseAdmin.auth.admin.listUsers()
+    if (error) throw new Error("Failed to fetch user directory")
+    
+    const directoryUsers = users.filter(u => userIds.includes(u.id))
+    const directoryEmails = directoryUsers.map(u => u.email).filter(Boolean) as string[]
+    targetEmails = [...targetEmails, ...directoryEmails]
+  }
   
-  const targetUsers = users.filter(u => userIds.includes(u.id))
-  if (targetUsers.length === 0) throw new Error("No valid users selected")
+  if (targetEmails.length === 0) throw new Error("No valid users or email addresses selected")
   
-  const targetEmails = targetUsers.map(u => u.email).filter(Boolean) as string[]
+  // Deduplicate emails
+  targetEmails = Array.from(new Set(targetEmails))
 
   const htmlContent = `
     <!DOCTYPE html>
