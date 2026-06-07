@@ -51,25 +51,25 @@ serve(async (req) => {
       <style>
         body {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-          background-color: #0f172a;
+          background-color: #030712; /* gray-950 */
           margin: 0;
           padding: 0;
-          color: #f8fafc;
+          color: #f9fafb; /* gray-50 */
         }
         .container {
           max-width: 600px;
           margin: 40px auto;
-          background-color: #1e293b;
-          border: 1px solid #334155;
+          background-color: #111827; /* gray-900 */
+          border: 1px solid #1f2937; /* gray-800 */
           border-radius: 24px;
           box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
           overflow: hidden;
         }
         .header {
-          background: linear-gradient(135deg, #1e3a8a, #172554);
+          background: #000000;
           padding: 30px 40px;
           text-align: center;
-          border-bottom: 1px solid #334155;
+          border-bottom: 1px solid #1f2937;
         }
         .header h1 {
           margin: 0;
@@ -77,66 +77,66 @@ serve(async (req) => {
           font-weight: 800;
           letter-spacing: -0.5px;
           color: #ffffff;
+          background: linear-gradient(135deg, #60a5fa, #3b82f6);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
         .content {
           padding: 40px;
           text-align: center;
         }
         .content h2 {
-          color: #f8fafc;
-          font-size: 22px;
+          color: #f9fafb;
+          font-size: 24px;
           font-weight: 700;
           margin-top: 0;
           margin-bottom: 16px;
         }
         .content p {
-          color: #94a3b8;
+          color: #9ca3af; /* gray-400 */
           font-size: 16px;
           line-height: 1.6;
           margin-bottom: 32px;
         }
         .button {
           display: inline-block;
-          background: linear-gradient(135deg, #2563eb, #1d4ed8);
+          background: #2563eb; /* blue-600 */
           color: #ffffff !important;
           font-weight: 600;
           text-decoration: none;
           padding: 16px 32px;
           border-radius: 12px;
           font-size: 16px;
+          border: 1px solid #3b82f6;
           box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
           transition: transform 0.2s;
         }
-        .button:hover {
-          background: linear-gradient(135deg, #3b82f6, #2563eb);
-        }
         .footer {
-          background-color: #0f172a;
+          background-color: #030712;
           padding: 24px 40px;
           text-align: center;
-          color: #64748b;
+          color: #4b5563; /* gray-600 */
           font-size: 13px;
-          border-top: 1px solid #334155;
+          border-top: 1px solid #1f2937;
         }
         .code {
-          background: #0f172a;
-          border: 1px solid #334155;
+          background: #030712;
+          border: 1px solid #1f2937;
           padding: 16px 24px;
           border-radius: 12px;
           font-size: 28px;
           font-weight: 800;
           letter-spacing: 6px;
-          color: #38bdf8;
+          color: #60a5fa; /* blue-400 */
           margin: 24px 0;
           display: inline-block;
-          box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
         }
       </style>
     </head>
     <body>
       <div class="container">
         <div class="header">
-          <h1>JointJourney</h1>
+          <h1 style="color: #60a5fa;">JointJourney</h1>
         </div>
         <div class="content">
           <h2>${subject}</h2>
