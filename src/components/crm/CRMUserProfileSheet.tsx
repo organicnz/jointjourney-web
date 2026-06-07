@@ -5,8 +5,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { UsersRound, Loader2, Mail, Trash2 } from "lucide-react"
+import { UsersRound, Loader2, Mail, Trash2, Activity } from "lucide-react"
 import { UserData } from "./types"
+import { AuditLogEntry } from "./CRMAuditLog"
 
 export function CRMUserProfileSheet({
   selectedUser,
@@ -18,7 +19,8 @@ export function CRMUserProfileSheet({
   updateProfileStatus,
   saveProfileNotes,
   setSelectedIds,
-  handleDeleteUser
+  handleDeleteUser,
+  auditLogs
 }: {
   selectedUser: UserData | null,
   isSheetOpen: boolean,
@@ -29,8 +31,10 @@ export function CRMUserProfileSheet({
   updateProfileStatus: (userId: string, newStatus: string) => void,
   saveProfileNotes: () => void,
   setSelectedIds: (ids: Set<string>) => void,
-  handleDeleteUser: (id: string) => void
+  handleDeleteUser: (id: string) => void,
+  auditLogs: AuditLogEntry[]
 }) {
+  const userLogs = selectedUser ? auditLogs.filter(log => log.action.includes(selectedUser.id)) : []
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetContent className="sm:max-w-md overflow-y-auto bg-white/95 backdrop-blur-3xl border-l border-white/50 shadow-2xl">
@@ -102,6 +106,28 @@ export function CRMUserProfileSheet({
               />
               <p className="text-xs font-medium text-gray-400 text-right">Saved automatically</p>
             </div>
+
+            {userLogs.length > 0 && (
+              <div className="space-y-3">
+                <Label className="text-gray-700 font-semibold flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-blue-500" /> Recent Activity
+                </Label>
+                <div className="bg-gray-50/50 p-4 rounded-2xl border border-gray-100 shadow-inner max-h-[200px] overflow-y-auto no-scrollbar space-y-3">
+                  {userLogs.map(log => (
+                    <div key={log.id} className="flex items-start gap-3 border-l-2 border-blue-200 pl-3">
+                      <div>
+                        <p className="text-xs font-medium text-gray-800">
+                          {log.action.replace(selectedUser!.id, 'this user')}
+                        </p>
+                        <p className="text-[10px] text-gray-400 mt-0.5">
+                          {log.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="pt-6 border-t border-gray-100 flex flex-col gap-3">
               <Button 

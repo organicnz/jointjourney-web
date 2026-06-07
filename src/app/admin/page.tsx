@@ -90,6 +90,7 @@ export default function AdminDashboard() {
               notesValue={state.notesValue} setNotesValue={actions.setNotesValue} savingProfileId={state.savingProfileId}
               updateProfileStatus={actions.updateProfileStatus} saveProfileNotes={actions.saveProfileNotes}
               setSelectedIds={actions.setSelectedIds} handleDeleteUser={actions.handleDeleteUser}
+              auditLogs={state.auditLogs}
             />
 
             <CRMCommandPalette 

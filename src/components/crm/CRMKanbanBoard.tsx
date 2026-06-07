@@ -6,7 +6,8 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { UserData } from "./types"
-import { Mail, Clock, ShieldAlert } from "lucide-react"
+import { Mail, Clock, MoreVertical, ExternalLink } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 // --- SORTABLE CARD COMPONENT ---
 function SortableUserCard({ user, onClick }: { user: UserData, onClick: (u: UserData) => void }) {
@@ -31,7 +32,24 @@ function SortableUserCard({ user, onClick }: { user: UserData, onClick: (u: User
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
           <span className="text-blue-700 font-bold text-xs uppercase">{user.email?.charAt(0) || '?'}</span>
         </div>
-        <p className="text-sm font-semibold text-gray-900 truncate" title={user.email}>{user.email}</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-gray-900 truncate" title={user.email}>{user.email}</p>
+        </div>
+        <div onClick={(e) => e.stopPropagation()}>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="p-1 rounded-md text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors focus:outline-none">
+              <MoreVertical className="w-4 h-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40 rounded-xl">
+              <DropdownMenuItem onClick={() => onClick(user)} className="cursor-pointer">
+                <ExternalLink className="w-4 h-4 mr-2" /> View Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => window.location.href = `mailto:${user.email}`} className="cursor-pointer">
+                <Mail className="w-4 h-4 mr-2" /> Email User
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       
       {user.special_skills && (
