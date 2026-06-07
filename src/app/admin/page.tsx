@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/utils/supabase/server"
+import { UserData } from "@/components/crm/types"
 import CRMClient from "./CRMClient"
 import { getUsersAction } from "./actions"
 
@@ -14,7 +15,7 @@ export default async function AdminPage() {
   }
 
   // 2. Fetch Users Data Server-Side (Includes emails from auth.users via Admin API)
-  let initialUsers = []
+  let initialUsers: UserData[] = []
   try {
     initialUsers = await getUsersAction()
   } catch (error) {
