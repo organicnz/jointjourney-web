@@ -26,6 +26,7 @@ import { UserData } from "@/components/crm/types"
 type Tab = 'overview' | 'contacts' | 'campaigns' | 'activity'
 
 export default function CRMClient({ initialUsers }: { initialUsers: UserData[] }) {
+  const { state, actions } = useCRM(initialUsers)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
