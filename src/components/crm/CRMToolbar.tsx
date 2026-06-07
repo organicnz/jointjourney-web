@@ -13,7 +13,8 @@ export function CRMToolbar({
   viewMode, setViewMode,
   searchQuery, setSearchQuery, setCurrentPage,
   exportToCSV, selectedIdsCount, handleBulkStatusUpdate,
-  activeSegment, setActiveSegment
+  activeSegment, setActiveSegment,
+  hasNotesFilter, setHasNotesFilter
 }: {
   viewMode: 'list' | 'kanban'
   setViewMode: (mode: 'list' | 'kanban') => void
