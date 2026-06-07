@@ -21,8 +21,15 @@ serve(async (req) => {
     // Bulletproof Redirect Overwrite: Ignore Supabase Dashboard Configuration
     redirect_to = "https://jointjourney.app/auth/callback"
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "https://nkxztsfuhgjvcdseuree.supabase.co"
-    const verifyUrl = `${supabaseUrl}/auth/v1/verify?type=${email_action_type}&token_hash=${token_hash}&redirect_to=${encodeURIComponent(redirect_to)}`
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") as string
+    
+    // Construct URL based on whether token_hash (PKCE) or token (Implicit) is provided
+    let verifyUrl = `${supabaseUrl}/auth/v1/verify?type=${email_action_type}&redirect_to=${encodeURIComponent(redirect_to)}`
+    if (token_hash) {
+      verifyUrl += `&token_hash=${token_hash}`
+    } else if (token) {
+      verifyUrl += `&token=${token}`
+    }
 
     let subject = "Your JointJourney Login Link"
     let actionText = "Sign In"
