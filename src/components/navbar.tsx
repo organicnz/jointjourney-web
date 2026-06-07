@@ -59,6 +59,11 @@ export async function Navbar() {
                     Account
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
+                    <Link href="/profile" className="w-full text-left">
+                      <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        Profile Settings
+                      </DropdownMenuItem>
+                    </Link>
                     <form action={signOut}>
                       <button className="w-full text-left">
                         <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-100 dark:focus:bg-red-950">

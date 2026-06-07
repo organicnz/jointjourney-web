@@ -51,6 +51,8 @@ export default function CRMClient({ initialUsers }: { initialUsers: UserData[] }
                   selectedIdsCount={state.selectedIds.size} handleBulkStatusUpdate={actions.handleBulkStatusUpdate}
                   activeSegment={state.activeSegment} setActiveSegment={actions.setActiveSegment}
                   hasNotesFilter={state.hasNotesFilter} setHasNotesFilter={actions.setHasNotesFilter}
+                  statusFilters={state.statusFilters} setStatusFilters={actions.setStatusFilters}
+                  skillsFilters={state.skillsFilters} setSkillsFilters={actions.setSkillsFilters}
                 />
 
                 {/* View Container */}

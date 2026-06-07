@@ -27,6 +27,8 @@ export function useCRM(initialUsers: UserData[] = []) {
     searchQuery, setSearchQuery,
     activeSegment, setActiveSegment,
     hasNotesFilter, setHasNotesFilter,
+    statusFilters, setStatusFilters,
+    skillsFilters, setSkillsFilters,
     sortConfig, setSortConfig, handleSort,
     currentPage, setCurrentPage,
     filteredAndSortedUsers, paginatedUsers, totalPages
@@ -67,14 +69,14 @@ export function useCRM(initialUsers: UserData[] = []) {
       users, loading, viewMode, searchQuery, activeSegment, currentPage, totalPages,
       filteredAndSortedUsers, paginatedUsers, selectedIds,
       selectedUser, isSheetOpen, notesValue, savingProfileId, auditLogs,
-      hasNotesFilter
+      hasNotesFilter, statusFilters, skillsFilters
     },
     actions: {
       setViewMode, setSearchQuery, setActiveSegment, setCurrentPage,
       toggleAll, toggleUser, selectAll, copyToClipboard, handleSort,
       handleDeleteUser: boundHandleDeleteUser, saveSkills, updateProfileStatus, saveProfileNotes, handleBulkStatusUpdate: boundHandleBulkStatusUpdate,
       openUserProfile, exportToCSV, setIsSheetOpen, setNotesValue, setSelectedIds, logActivity,
-      setHasNotesFilter
+      setHasNotesFilter, setStatusFilters, setSkillsFilters
     }
   }
 }

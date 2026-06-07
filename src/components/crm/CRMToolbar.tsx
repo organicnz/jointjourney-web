@@ -13,7 +13,9 @@ export function CRMToolbar({
   searchQuery, setSearchQuery, setCurrentPage,
   exportToCSV, selectedIdsCount, handleBulkStatusUpdate,
   activeSegment, setActiveSegment,
-  hasNotesFilter, setHasNotesFilter
+  hasNotesFilter, setHasNotesFilter,
+  statusFilters, setStatusFilters,
+  skillsFilters, setSkillsFilters
 }: {
   viewMode: 'list' | 'kanban'
   setViewMode: (mode: 'list' | 'kanban') => void
@@ -27,6 +29,10 @@ export function CRMToolbar({
   setActiveSegment: (s: Segment) => void
   hasNotesFilter: boolean | null
   setHasNotesFilter: (b: boolean | null) => void
+  statusFilters: string[]
+  setStatusFilters: (s: string[]) => void
+  skillsFilters: string[]
+  setSkillsFilters: (s: string[]) => void
 }) {
   
   return (
@@ -81,9 +87,58 @@ export function CRMToolbar({
                 >
                   No Notes
                 </DropdownMenuCheckboxItem>
+                
+                <div className="my-2 border-t border-gray-100 dark:border-gray-800" />
+                <div className="px-2 py-1.5 text-sm font-semibold text-gray-500">Filter by Status</div>
+                {['Lead', 'Active', 'VIP', 'Inactive', 'Banned'].map(status => (
+                  <DropdownMenuCheckboxItem 
+                    key={status}
+                    checked={statusFilters.includes(status)}
+                    onCheckedChange={(c) => {
+                      if (c) setStatusFilters([...statusFilters, status])
+                      else setStatusFilters(statusFilters.filter(s => s !== status))
+                      setCurrentPage(1)
+                    }}
+                  >
+                    {status}
+                  </DropdownMenuCheckboxItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Skills Filter Input */}
+            <div className="relative w-32 hidden md:block">
+              <Input 
+                placeholder="Skill..." 
+                className="bg-white/80 dark:bg-gray-800/80 border-gray-200/80 dark:border-gray-700 rounded-xl focus-visible:ring-blue-500/30 transition-all shadow-sm h-10 text-sm"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.currentTarget.value) {
+                    const val = e.currentTarget.value.trim()
+                    if (val && !skillsFilters.includes(val)) {
+                      setSkillsFilters([...skillsFilters, val])
+                      e.currentTarget.value = ''
+                      setCurrentPage(1)
+                    }
+                  }
+                }}
+              />
+            </div>
           </div>
+
+          {/* Active Skill Badges */}
+          {skillsFilters.length > 0 && (
+            <div className="flex gap-2 items-center mr-2">
+              {skillsFilters.map(skill => (
+                <span key={skill} className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs rounded-lg flex items-center gap-1 font-medium">
+                  {skill}
+                  <button onClick={() => {
+                    setSkillsFilters(skillsFilters.filter(s => s !== skill))
+                    setCurrentPage(1)
+                  }} className="hover:text-blue-900 dark:hover:text-blue-100">&times;</button>
+                </span>
+              ))}
+            </div>
+          )}
 
           {selectedIdsCount > 0 && (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex-shrink-0">

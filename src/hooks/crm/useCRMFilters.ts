@@ -5,6 +5,8 @@ export function useCRMFilters(users: UserData[]) {
   const [searchQuery, setSearchQuery] = useState("")
   const [activeSegment, setActiveSegment] = useState<Segment>('All')
   const [hasNotesFilter, setHasNotesFilter] = useState<boolean | null>(null)
+  const [statusFilters, setStatusFilters] = useState<string[]>([])
+  const [skillsFilters, setSkillsFilters] = useState<string[]>([])
   const [sortConfig, setSortConfig] = useState<SortConfig>(null)
   const [currentPage, setCurrentPage] = useState(1)
 
@@ -21,6 +23,18 @@ export function useCRMFilters(users: UserData[]) {
     if (hasNotesFilter !== null) {
       if (hasNotesFilter) result = result.filter(u => !!u.crm_notes)
       else result = result.filter(u => !u.crm_notes)
+    }
+
+    if (statusFilters.length > 0) {
+      result = result.filter(u => u.status && statusFilters.includes(u.status))
+    }
+
+    if (skillsFilters.length > 0) {
+      result = result.filter(u => {
+        if (!u.special_skills) return false
+        const userSkills = u.special_skills.toLowerCase().split(',').map(s => s.trim())
+        return skillsFilters.every(skill => userSkills.includes(skill.toLowerCase()))
+      })
     }
 
     if (searchQuery) {
@@ -42,7 +56,7 @@ export function useCRMFilters(users: UserData[]) {
       })
     }
     return result
-  }, [users, searchQuery, activeSegment, sortConfig, hasNotesFilter])
+  }, [users, searchQuery, activeSegment, sortConfig, hasNotesFilter, statusFilters, skillsFilters])
 
   const itemsPerPage = 10
   const paginatedUsers = useMemo(() => {
@@ -62,6 +76,8 @@ export function useCRMFilters(users: UserData[]) {
     searchQuery, setSearchQuery,
     activeSegment, setActiveSegment,
     hasNotesFilter, setHasNotesFilter,
+    statusFilters, setStatusFilters,
+    skillsFilters, setSkillsFilters,
     sortConfig, setSortConfig, handleSort,
     currentPage, setCurrentPage,
     filteredAndSortedUsers, paginatedUsers, totalPages
