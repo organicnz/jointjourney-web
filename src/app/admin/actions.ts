@@ -43,7 +43,9 @@ export async function getUsersAction() {
     email: user.email,
     created_at: user.created_at,
     last_sign_in_at: user.last_sign_in_at,
-    special_skills: user.user_metadata?.special_skills || ""
+    special_skills: user.user_metadata?.special_skills || "",
+    status: user.user_metadata?.status || "Lead",
+    crm_notes: user.user_metadata?.crm_notes || ""
   }))
 }
 
@@ -58,6 +60,22 @@ export async function updateUserSkillsAction(userId: string, skills: string) {
   if (error) {
     console.error("Failed to update user skills:", error)
     throw new Error("Failed to update user skills")
+  }
+
+  return { success: true }
+}
+
+export async function updateUserProfileDetailsAction(userId: string, updates: { status?: string, crm_notes?: string }) {
+  await verifyAdmin()
+  
+  const supabaseAdmin = createAdminClient()
+  const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+    user_metadata: updates
+  })
+  
+  if (error) {
+    console.error("Failed to update user profile details:", error)
+    throw new Error("Failed to update user profile details")
   }
 
   return { success: true }
