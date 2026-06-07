@@ -51,7 +51,7 @@ export function CRMUserProfileSheet({
               <Label className="text-gray-700 font-semibold">User Status</Label>
               <Select 
                 value={selectedUser.status || "Lead"} 
-                onValueChange={(val) => updateProfileStatus(selectedUser.id, val)}
+                onValueChange={(val) => { if (val) updateProfileStatus(selectedUser.id, val) }}
               >
                 <SelectTrigger className="w-full h-12 bg-white rounded-xl shadow-sm border-gray-200">
                   <SelectValue placeholder="Select a status" />
