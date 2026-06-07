@@ -14,6 +14,19 @@ export async function Navbar() {
     data: { user },
   } = await supabase.auth.getUser()
 
+  let isAdmin = false
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    
+    if (profile?.role === 'admin') {
+      isAdmin = true
+    }
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 dark:border-white/5 bg-white/60 dark:bg-slate-950/60 backdrop-blur-xl supports-[backdrop-filter]:bg-white/40 supports-[backdrop-filter]:dark:bg-slate-950/40 shadow-sm dark:shadow-none transition-colors duration-300">
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between mx-auto px-4 sm:px-8">
@@ -59,6 +72,13 @@ export async function Navbar() {
                     Account
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
+                    {isAdmin && (
+                      <Link href="/admin" className="w-full text-left">
+                        <DropdownMenuItem className="cursor-pointer font-semibold text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition-colors">
+                          Admin Panel
+                        </DropdownMenuItem>
+                      </Link>
+                    )}
                     <Link href="/profile" className="w-full text-left">
                       <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         Profile Settings
