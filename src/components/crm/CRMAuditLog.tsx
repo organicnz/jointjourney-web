@@ -12,7 +12,7 @@ export type AuditLogEntry = {
 
 export function CRMAuditLog({ logs }: { logs: AuditLogEntry[] }) {
   return (
-    <Card className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] h-[400px] flex flex-col relative overflow-hidden group">
+    <Card className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] h-full min-h-[400px] flex flex-col relative overflow-hidden group">
       <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <CardHeader className="flex flex-row items-center gap-3 pb-2 border-b border-white/40 dark:border-gray-700/50 relative z-10">
         <div className="p-2 bg-green-100/50 dark:bg-green-900/30 rounded-xl text-green-600 dark:text-green-400 backdrop-blur-md shadow-sm border border-white/50 dark:border-green-800/50">
