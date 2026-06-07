@@ -58,7 +58,7 @@ export default function CRMClient({ initialUsers }: { initialUsers: UserData[] }
 
       {/* Sidebar Navigation */}
       <aside className="w-full md:w-64 flex-shrink-0 relative z-20">
-        <div className="sticky top-24 bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-3xl p-4 flex flex-row md:flex-col gap-2 overflow-x-auto no-scrollbar">
+        <div className="sticky top-24 bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-3xl p-4 flex flex-col gap-2 max-h-[calc(100vh-8rem)] overflow-y-auto no-scrollbar">
           <div className="hidden md:block px-4 pb-4 mb-2 border-b border-white/30 dark:border-gray-700/30">
             <h3 className="text-xs font-extrabold uppercase tracking-widest text-gray-500 dark:text-gray-400">Navigation</h3>
           </div>
@@ -66,7 +66,7 @@ export default function CRMClient({ initialUsers }: { initialUsers: UserData[] }
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as Tab)}
-              className={`flex items-center justify-center md:justify-start gap-3 px-4 py-3 rounded-2xl transition-all duration-300 font-bold text-sm flex-shrink-0 ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 font-bold text-sm ${
                 activeTab === tab.id
                   ? 'bg-blue-600/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 shadow-[0_2px_10px_rgb(37,99,235,0.1)] border border-blue-200/50 dark:border-blue-800/50'
                   : 'text-gray-600 dark:text-gray-300 hover:bg-white/60 dark:hover:bg-gray-800/60 hover:text-gray-900 dark:hover:text-gray-100 border border-transparent'
