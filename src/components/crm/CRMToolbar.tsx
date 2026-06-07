@@ -3,10 +3,10 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, Download, LayoutList, KanbanSquare, Moon, Sun } from "lucide-react"
+import { Search, Download, LayoutList, KanbanSquare } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Segment } from "./types"
-import { useTheme } from "next-themes"
+import { ThemeToggle } from "@/components/ui/ThemeToggle"
 
 export function CRMToolbar({
   viewMode, setViewMode,
@@ -25,7 +25,6 @@ export function CRMToolbar({
   activeSegment: Segment
   setActiveSegment: (s: Segment) => void
 }) {
-  const { theme, setTheme } = useTheme()
   
   return (
     <>
@@ -82,13 +81,7 @@ export function CRMToolbar({
             <Download className="h-4 w-4 mr-2" /> Export
           </Button>
 
-          <Button 
-            variant="ghost" 
-            className="rounded-xl h-10 w-10 p-0 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100" 
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
+          <ThemeToggle />
         </div>
       </div>
 
