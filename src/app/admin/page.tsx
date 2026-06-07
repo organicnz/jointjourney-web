@@ -147,8 +147,8 @@ export default function AdminDashboard() {
     finally { setSavingProfileId(null) }
   }
 
-  const handleBulkStatusUpdate = async (newStatus: string) => {
-    if (selectedIds.size === 0) return
+  const handleBulkStatusUpdate = async (newStatus: string | null) => {
+    if (!newStatus || selectedIds.size === 0) return
     try {
       await bulkUpdateUserStatusAction(Array.from(selectedIds), newStatus)
       setUsers(prev => prev.map(u => selectedIds.has(u.id) ? { ...u, status: newStatus } : u))
