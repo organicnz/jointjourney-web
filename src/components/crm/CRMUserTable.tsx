@@ -1,0 +1,259 @@
+"use client"
+
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { ArrowUpDown, Edit2, Check, X, Copy, Trash2, Ghost, Loader2 } from "lucide-react"
+import { UserData, SortConfig } from "./types"
+
+export function CRMUserTable({
+  users,
+  loading,
+  paginatedUsers,
+  selectedIds,
+  toggleAll,
+  toggleUser,
+  handleSort,
+  openUserProfile,
+  copyToClipboard,
+  handleDeleteUser,
+  saveSkills,
+  currentPage,
+  setCurrentPage,
+  totalPages,
+  filteredCount
+}: {
+  users: UserData[],
+  loading: boolean,
+  paginatedUsers: UserData[],
+  selectedIds: Set<string>,
+  toggleAll: () => void,
+  toggleUser: (id: string) => void,
+  handleSort: (key: keyof UserData) => void,
+  openUserProfile: (user: UserData) => void,
+  copyToClipboard: (text: string) => void,
+  handleDeleteUser: (id: string, e?: React.MouseEvent) => void,
+  saveSkills: (userId: string, newSkills: string) => Promise<void>,
+  currentPage: number,
+  setCurrentPage: (p: (prev: number) => number) => void,
+  totalPages: number,
+  filteredCount: number
+}) {
+  const [editingUserId, setEditingUserId] = useState<string | null>(null)
+  const [editSkillsValue, setEditSkillsValue] = useState("")
+  const [savingSkillsId, setSavingSkillsId] = useState<string | null>(null)
+
+  const getStatusBadgeVariant = (status: string) => {
+    switch(status.toLowerCase()) {
+      case 'active': return 'default'
+      case 'vip': return 'secondary'
+      case 'banned': return 'destructive'
+      case 'inactive': return 'outline'
+      default: return 'outline' // Lead
+    }
+  }
+
+  const startEditingSkills = (user: UserData) => {
+    setEditingUserId(user.id)
+    setEditSkillsValue(user.special_skills || "")
+  }
+
+  const handleSaveSkills = async (userId: string) => {
+    setSavingSkillsId(userId)
+    await saveSkills(userId, editSkillsValue)
+    setSavingSkillsId(null)
+    setEditingUserId(null)
+  }
+
+  const MotionTableRow = motion(TableRow)
+  const itemsPerPage = 10
+
+  return (
+    <div className="flex flex-col flex-1 h-full">
+      <div className="overflow-x-auto flex-1">
+        <Table>
+          <TableHeader className="bg-gray-50/30">
+            <TableRow className="hover:bg-transparent border-gray-100">
+              <TableHead className="w-14 text-center">
+                <Checkbox 
+                  checked={paginatedUsers.length > 0 && paginatedUsers.every(u => selectedIds.has(u.id))}
+                  onCheckedChange={toggleAll}
+                  className="rounded-md border-gray-300"
+                />
+              </TableHead>
+              <TableHead className="cursor-pointer hover:text-blue-600 transition-colors py-4" onClick={() => handleSort('email')}>
+                <div className="flex items-center gap-2 font-semibold">User <ArrowUpDown className="h-3 w-3" /></div>
+              </TableHead>
+              <TableHead className="cursor-pointer hover:text-blue-600 transition-colors py-4" onClick={() => handleSort('status')}>
+                <div className="flex items-center gap-2 font-semibold">Status <ArrowUpDown className="h-3 w-3" /></div>
+              </TableHead>
+              <TableHead className="cursor-pointer hover:text-blue-600 transition-colors py-4" onClick={() => handleSort('special_skills')}>
+                <div className="flex items-center gap-2 font-semibold">Special Skills <ArrowUpDown className="h-3 w-3" /></div>
+              </TableHead>
+              <TableHead className="cursor-pointer hover:text-blue-600 transition-colors py-4" onClick={() => handleSort('created_at')}>
+                <div className="flex items-center gap-2 font-semibold">Joined <ArrowUpDown className="h-3 w-3" /></div>
+              </TableHead>
+              <TableHead className="w-16 text-right font-semibold py-4">
+                Actions
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <AnimatePresence mode="popLayout">
+              {loading ? (
+                <MotionTableRow exit={{ opacity: 0 }}>
+                  <TableCell colSpan={6} className="h-64">
+                    <div className="flex flex-col items-center justify-center text-gray-400">
+                      <Loader2 className="h-8 w-8 animate-spin mb-4 text-blue-500" />
+                      <p className="font-medium">Loading user directory...</p>
+                    </div>
+                  </TableCell>
+                </MotionTableRow>
+              ) : paginatedUsers.length === 0 ? (
+                <MotionTableRow 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <TableCell colSpan={6} className="h-64">
+                    <div className="flex flex-col items-center justify-center text-gray-400">
+                      <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
+                        <Ghost className="h-8 w-8 text-gray-300" />
+                      </div>
+                      <p className="font-semibold text-gray-900 mb-1">No users found</p>
+                      <p className="text-sm">Try adjusting your segment or search query.</p>
+                    </div>
+                  </TableCell>
+                </MotionTableRow>
+              ) : (
+                paginatedUsers.map((user, index) => (
+                  <MotionTableRow 
+                    key={user.id} 
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.2, delay: index * 0.03 }}
+                    className="cursor-pointer group hover:bg-blue-50/40 transition-colors border-gray-100" 
+                    onClick={() => openUserProfile(user)}
+                  >
+                    <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                      <Checkbox 
+                        checked={selectedIds.has(user.id)}
+                        onCheckedChange={() => toggleUser(user.id)}
+                        className="rounded-md border-gray-300"
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium max-w-[180px] truncate" title={user.email}>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
+                          <span className="text-blue-700 font-bold text-xs uppercase">{user.email?.charAt(0) || '?'}</span>
+                        </div>
+                        <span className="truncate">{user.email || 'No email'}</span>
+                        {user.email && (
+                          <button onClick={(e) => { e.stopPropagation(); copyToClipboard(user.email!) }} className="text-gray-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity ml-auto" title="Copy Email">
+                            <Copy className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell>
+                      <Badge variant={getStatusBadgeVariant(user.status || 'Lead')} className="pointer-events-none capitalize shadow-sm">
+                        {user.status || 'Lead'}
+                      </Badge>
+                    </TableCell>
+
+                    <TableCell className="min-w-[150px]" onClick={(e) => e.stopPropagation()}>
+                      {editingUserId === user.id ? (
+                        <div className="flex items-center gap-2">
+                          <Input 
+                            autoFocus
+                            value={editSkillsValue}
+                            onChange={(e) => setEditSkillsValue(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleSaveSkills(user.id)
+                              if (e.key === 'Escape') setEditingUserId(null)
+                            }}
+                            className="h-8 text-sm rounded-lg"
+                            placeholder="e.g. React, Marketing"
+                            disabled={savingSkillsId === user.id}
+                          />
+                          {savingSkillsId === user.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                          ) : (
+                            <>
+                              <button onClick={() => handleSaveSkills(user.id)} className="text-green-600 hover:text-green-700 bg-green-50 p-1.5 rounded-md">
+                                <Check className="h-4 w-4" />
+                              </button>
+                              <button onClick={() => setEditingUserId(null)} className="text-gray-500 hover:text-gray-700 bg-gray-100 p-1.5 rounded-md">
+                                <X className="h-4 w-4" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      ) : (
+                        <div 
+                          className="flex items-center justify-between px-3 py-1.5 -mx-3 rounded-lg hover:bg-gray-100/80 cursor-text transition-colors group/edit"
+                          onClick={() => startEditingSkills(user)}
+                        >
+                          <span className={user.special_skills ? "text-gray-700 text-sm font-medium" : "text-gray-400 italic text-sm"}>
+                            {user.special_skills || "Add skills..."}
+                          </span>
+                          <Edit2 className="h-3.5 w-3.5 text-gray-400 opacity-0 group-hover/edit:opacity-100 transition-opacity" />
+                        </div>
+                      )}
+                    </TableCell>
+
+                    <TableCell className="text-gray-500 text-sm whitespace-nowrap font-medium">
+                      {new Date(user.created_at).toLocaleDateString()}
+                    </TableCell>
+
+                    <TableCell className="text-right">
+                       <button onClick={(e) => handleDeleteUser(user.id, e)} className="text-red-400 hover:text-red-600 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all p-2 rounded-lg" title="Delete User">
+                          <Trash2 className="h-4 w-4" />
+                       </button>
+                    </TableCell>
+                  </MotionTableRow>
+                ))
+              )}
+            </AnimatePresence>
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      {!loading && totalPages > 1 && (
+        <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-white mt-auto">
+          <p className="text-sm text-gray-500 font-medium">
+            Showing <span className="text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="text-gray-900">{Math.min(currentPage * itemsPerPage, filteredCount)}</span> of <span className="text-gray-900">{filteredCount}</span>
+          </p>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="rounded-lg shadow-sm"
+            >
+              Previous
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="rounded-lg shadow-sm"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
