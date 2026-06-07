@@ -80,7 +80,7 @@ export async function sendAdminEmailAction(userIds: string[], subject: string, m
           <h1 style="margin:0; font-size: 24px;">JointJourney</h1>
         </div>
         <div class="content">
-          ${message.replace(/\n/g, '<br />')}
+          ${message}
         </div>
         <div class="footer">
           You are receiving this email because you are a registered member of JointJourney.

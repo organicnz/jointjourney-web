@@ -1,22 +1,33 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
+import dynamic from "next/dynamic"
 import { getUsersAction, sendAdminEmailAction } from "./actions"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Loader2, Mail, Send } from "lucide-react"
+import { Loader2, Mail, Send, Search, Download, ArrowUpDown } from "lucide-react"
+
+// Import ReactQuill dynamically to avoid SSR issues
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
+import "react-quill/dist/quill.snow.css"
 
 type UserData = { id: string, email?: string, created_at: string, last_sign_in_at?: string }
+type SortConfig = { key: keyof UserData; direction: 'asc' | 'desc' } | null
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState<UserData[]>([])
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
   
+  // Search, Sort, and Pagination states
+  const [searchQuery, setSearchQuery] = useState("")
+  const [sortConfig, setSortConfig] = useState<SortConfig>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
+
   const [subject, setSubject] = useState("")
   const [message, setMessage] = useState("")
   const [sending, setSending] = useState(false)
@@ -35,11 +46,76 @@ export default function AdminDashboard() {
       })
   }, [])
 
+  // Memoized Filtering, Sorting, and Pagination
+  const filteredAndSortedUsers = useMemo(() => {
+    let result = [...users]
+
+    if (searchQuery) {
+      result = result.filter(u => u.email?.toLowerCase().includes(searchQuery.toLowerCase()))
+    }
+
+    if (sortConfig) {
+      result.sort((a, b) => {
+        const valA = a[sortConfig.key] || ""
+        const valB = b[sortConfig.key] || ""
+        if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1
+        if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1
+        return 0
+      })
+    }
+
+    return result
+  }, [users, searchQuery, sortConfig])
+
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return filteredAndSortedUsers.slice(startIndex, startIndex + itemsPerPage)
+  }, [filteredAndSortedUsers, currentPage])
+
+  const totalPages = Math.ceil(filteredAndSortedUsers.length / itemsPerPage)
+
+  const handleSort = (key: keyof UserData) => {
+    setSortConfig(current => {
+      if (current?.key === key) {
+        return current.direction === 'asc' ? { key, direction: 'desc' } : null
+      }
+      return { key, direction: 'asc' }
+    })
+  }
+
+  const exportToCSV = () => {
+    const targetUsers = selectedIds.size > 0 ? users.filter(u => selectedIds.has(u.id)) : filteredAndSortedUsers
+    if (targetUsers.length === 0) return
+
+    const headers = ['ID', 'Email', 'Joined', 'Last Sign In']
+    const rows = targetUsers.map(u => [
+      u.id, 
+      u.email || '', 
+      new Date(u.created_at).toISOString(), 
+      u.last_sign_in_at ? new Date(u.last_sign_in_at).toISOString() : ''
+    ])
+    
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(','), ...rows.map(e => e.join(','))].join("\n")
+    
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", "jointjourney_users.csv")
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   const toggleAll = () => {
-    if (selectedIds.size === users.length) {
+    if (selectedIds.size === paginatedUsers.length) {
+      // If all currently visible are selected, clear all
       setSelectedIds(new Set())
     } else {
-      setSelectedIds(new Set(users.map(u => u.id)))
+      // Otherwise, select all currently visible
+      const newSelected = new Set(selectedIds)
+      paginatedUsers.forEach(u => newSelected.add(u.id))
+      setSelectedIds(newSelected)
     }
   }
 
@@ -56,7 +132,7 @@ export default function AdminDashboard() {
       setFeedback({ type: 'error', text: "Please select at least one user." })
       return
     }
-    if (!subject || !message) {
+    if (!subject || !message || message === '<p><br></p>') {
       setFeedback({ type: 'error', text: "Subject and message are required." })
       return
     }
@@ -77,34 +153,60 @@ export default function AdminDashboard() {
     }
   }
 
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['link', 'clean']
+    ],
+  }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       
       {/* Users Table */}
-      <div className="lg:col-span-2 bg-white/60 backdrop-blur-xl border rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+      <div className="lg:col-span-2 bg-white/60 backdrop-blur-xl border rounded-2xl shadow-sm overflow-hidden flex flex-col">
+        <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-xl font-semibold text-gray-900">User Directory</h3>
-            <p className="text-sm text-gray-500 mt-1">Select users to send bulk or targeted emails.</p>
+            <p className="text-sm text-gray-500 mt-1">Manage and communicate with users.</p>
           </div>
-          <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
-            {users.length} Total
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="relative flex-1 sm:w-64">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+              <Input 
+                placeholder="Search emails..." 
+                className="pl-9 bg-white"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <Button variant="outline" size="icon" onClick={exportToCSV} title="Export CSV">
+              <Download className="h-4 w-4 text-gray-700" />
+            </Button>
           </div>
         </div>
         
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto flex-1">
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 <TableHead className="w-12 text-center">
                   <Checkbox 
-                    checked={users.length > 0 && selectedIds.size === users.length}
+                    checked={paginatedUsers.length > 0 && paginatedUsers.every(u => selectedIds.has(u.id))}
                     onCheckedChange={toggleAll}
                   />
                 </TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead>Last Sign In</TableHead>
+                <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort('email')}>
+                  <div className="flex items-center gap-1">Email <ArrowUpDown className="h-3 w-3" /></div>
+                </TableHead>
+                <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort('created_at')}>
+                  <div className="flex items-center gap-1">Joined <ArrowUpDown className="h-3 w-3" /></div>
+                </TableHead>
+                <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort('last_sign_in_at')}>
+                  <div className="flex items-center gap-1">Last Sign In <ArrowUpDown className="h-3 w-3" /></div>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -115,14 +217,14 @@ export default function AdminDashboard() {
                     Loading users...
                   </TableCell>
                 </TableRow>
-              ) : users.length === 0 ? (
+              ) : paginatedUsers.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} className="h-48 text-center text-gray-500">
-                    No users found.
+                    No users found matching your criteria.
                   </TableCell>
                 </TableRow>
               ) : (
-                users.map(user => (
+                paginatedUsers.map(user => (
                   <TableRow key={user.id} className="cursor-pointer" onClick={() => toggleUser(user.id)}>
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                       <Checkbox 
@@ -143,6 +245,33 @@ export default function AdminDashboard() {
             </TableBody>
           </Table>
         </div>
+
+        {/* Pagination Controls */}
+        {!loading && totalPages > 1 && (
+          <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50">
+            <p className="text-sm text-gray-500">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredAndSortedUsers.length)} of {filteredAndSortedUsers.length}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Email Composer */}
@@ -171,13 +300,15 @@ export default function AdminDashboard() {
           
           <div className="space-y-2">
             <Label htmlFor="message">Message Body</Label>
-            <Textarea 
-              id="message" 
-              placeholder="Type your message here... (HTML tags will be escaped, line breaks are preserved)"
-              className="min-h-[200px] bg-white resize-none"
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-            />
+            <div className="bg-white rounded-md border overflow-hidden">
+              <ReactQuill 
+                theme="snow"
+                value={message} 
+                onChange={setMessage} 
+                modules={quillModules}
+                className="h-[250px] border-none"
+              />
+            </div>
           </div>
 
           {feedback && (
