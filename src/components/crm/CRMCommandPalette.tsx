@@ -19,7 +19,8 @@ export function CRMCommandPalette({
   openUserProfile,
   exportToCSV,
   setViewMode,
-  selectAll
+  selectAll,
+  setActiveTab
 }: {
   users: UserData[],
   openUserProfile: (user: UserData) => void,
