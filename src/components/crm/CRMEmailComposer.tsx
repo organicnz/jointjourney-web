@@ -91,6 +91,13 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
       
       <form onSubmit={handleSendEmail} className="p-6 space-y-6">
         <div className="space-y-2">
+          <Label className="text-gray-700 dark:text-gray-300 font-semibold ml-1">From</Label>
+          <div className="bg-gray-100/50 dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-800 rounded-xl h-12 flex items-center px-4 text-gray-500 dark:text-gray-400 cursor-not-allowed">
+            JointJourney &lt;contact@jointjourney.app&gt;
+          </div>
+        </div>
+
+        <div className="space-y-2">
           <Label htmlFor="subject" className="text-gray-700 dark:text-gray-300 font-semibold ml-1">Subject Line</Label>
           <Input 
             id="subject" 
