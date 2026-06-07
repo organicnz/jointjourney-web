@@ -65,10 +65,8 @@ export function CRMToolbar({
             </div>
             
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className={`rounded-xl h-10 w-10 p-0 shadow-sm transition-all ${hasNotesFilter !== null ? 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-400' : 'dark:bg-gray-800 dark:border-gray-700'}`}>
-                  <Filter className="h-4 w-4" />
-                </Button>
+              <DropdownMenuTrigger className={`inline-flex items-center justify-center rounded-xl h-10 w-10 p-0 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${hasNotesFilter !== null ? 'bg-blue-50 border border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-400' : 'bg-transparent border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
+                <Filter className="h-4 w-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 rounded-xl">
                 <DropdownMenuCheckboxItem 
