@@ -83,10 +83,8 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
             </CardDescription>
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 rounded-xl">
-                <FileText className="h-4 w-4 mr-2" /> Templates
-              </Button>
+            <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 rounded-xl px-3 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700">
+              <FileText className="h-4 w-4" /> Templates
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="rounded-xl">
               <DropdownMenuItem onClick={() => applyTemplate('welcome')}>Welcome Email</DropdownMenuItem>
