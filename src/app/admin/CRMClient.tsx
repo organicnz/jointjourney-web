@@ -83,7 +83,7 @@ export default function CRMClient({ initialUsers }: { initialUsers: UserData[] }
               </div>
 
               {/* Side Panel: Composer & Audit Log */}
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-6 sticky top-24 h-[calc(100vh-8rem)] overflow-y-auto no-scrollbar pb-6">
                 <CRMEmailComposer selectedIds={state.selectedIds} onSent={() => actions.setSelectedIds(new Set())} />
                 <CRMAuditLog logs={state.auditLogs} />
               </div>
