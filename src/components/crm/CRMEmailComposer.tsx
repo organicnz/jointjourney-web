@@ -1,16 +1,15 @@
 "use client"
 
 import { useState } from "react"
-import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
 import { sendAdminEmailAction } from "@/app/admin/actions"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, Mail, Send, FileText } from "lucide-react"
+import { Loader2, Mail, Send, FileText, Bold, Italic, Underline, Link2, List } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<string>, onSent: () => void }) {
   const [subject, setSubject] = useState("")
@@ -19,9 +18,9 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
   const quickTemplates = {
-    welcome: { sub: "Welcome to JointJourney!", body: "<p>Hi there,</p><p>Welcome to JointJourney. We are thrilled to have you!</p>" },
-    warning: { sub: "Account Notice", body: "<p>Hello,</p><p>Please note that your account requires immediate attention.</p>" },
-    followUp: { sub: "Following Up", body: "<p>Hi,</p><p>Just checking in to see if you needed any help!</p>" }
+    welcome: { sub: "Welcome to JointJourney!", body: "<p>Hi there,</p><br/><p>Welcome to JointJourney. We are thrilled to have you!</p>" },
+    warning: { sub: "Account Notice", body: "<p>Hello,</p><br/><p>Please note that your account requires immediate attention.</p>" },
+    followUp: { sub: "Following Up", body: "<p>Hi,</p><br/><p>Just checking in to see if you needed any help!</p>" }
   }
 
   const applyTemplate = (key: keyof typeof quickTemplates) => {
@@ -30,13 +29,18 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
     toast.success("Template applied")
   }
 
+  const insertTag = (tag: string) => {
+    const isSelfClosing = tag === 'br' || tag === 'hr'
+    setMessage(prev => `${prev}${isSelfClosing ? `<${tag}/>` : `<${tag}></${tag.split(' ')[0]}>`}`)
+  }
+
   const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault()
     if (selectedIds.size === 0) {
       setFeedback({ type: 'error', text: "Please select at least one user." })
       return
     }
-    if (!subject || !message || message === '<p><br></p>') {
+    if (!subject || !message || message.trim() === '') {
       setFeedback({ type: 'error', text: "Subject and message are required." })
       return
     }
@@ -44,7 +48,8 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
     setSending(true)
     
     try {
-      const res = await sendAdminEmailAction(Array.from(selectedIds), subject, message)
+      const formattedMessage = message.replace(/\n/g, '<br/>')
+      const res = await sendAdminEmailAction(Array.from(selectedIds), subject, formattedMessage)
       toast.success(`Successfully sent email to ${res.count} users!`)
       setSubject("")
       setMessage("")
@@ -56,75 +61,88 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
     }
   }
 
-
-
   return (
-    <div className="bg-white/70 backdrop-blur-2xl border border-white/80 rounded-3xl shadow-xl shadow-blue-900/5 overflow-hidden h-fit sticky top-24">
-      <CardHeader className="border-b border-gray-100 pb-4">
+    <div className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-2xl border border-white/80 dark:border-gray-800/80 rounded-3xl shadow-xl shadow-blue-900/5 dark:shadow-black/20 overflow-hidden h-fit sticky top-24">
+      <CardHeader className="border-b border-gray-100 dark:border-gray-800/50 pb-4">
         <div className="flex justify-between items-center">
           <div>
-            <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
-              <Mail className="h-5 w-5 text-blue-600" />
+            <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <Mail className="h-5 w-5 text-blue-600 dark:text-blue-500" />
               Broadcast Email
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="dark:text-gray-400 mt-1">
               {selectedIds.size === 0 
                 ? "Select users from the table to send emails." 
                 : `Ready to email ${selectedIds.size} users.`}
             </CardDescription>
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 rounded-xl px-3 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700">
+            <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-white/50 shadow-sm hover:bg-gray-100/80 hover:text-gray-900 h-9 rounded-xl px-4 dark:bg-gray-800/50 dark:text-gray-200 dark:border-gray-700/50 dark:hover:bg-gray-700">
               <FileText className="h-4 w-4" /> Templates
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl">
-              <DropdownMenuItem onClick={() => applyTemplate('welcome')}>Welcome Email</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => applyTemplate('warning')}>Account Warning</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => applyTemplate('followUp')}>Follow-up</DropdownMenuItem>
+            <DropdownMenuContent align="end" className="rounded-xl shadow-xl dark:border-gray-800">
+              <DropdownMenuItem className="cursor-pointer dark:focus:bg-gray-800" onClick={() => applyTemplate('welcome')}>Welcome Email</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer dark:focus:bg-gray-800" onClick={() => applyTemplate('warning')}>Account Warning</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer dark:focus:bg-gray-800" onClick={() => applyTemplate('followUp')}>Follow-up</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </CardHeader>
       
-      <form onSubmit={handleSendEmail} className="p-6 space-y-5">
+      <form onSubmit={handleSendEmail} className="p-6 space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="subject" className="text-gray-700 font-semibold ml-1">Subject Line</Label>
+          <Label htmlFor="subject" className="text-gray-700 dark:text-gray-300 font-semibold ml-1">Subject Line</Label>
           <Input 
             id="subject" 
             placeholder="e.g. Welcome to JointJourney Beta" 
             value={subject}
             onChange={e => setSubject(e.target.value)}
-            className="bg-white/80 border-gray-200/80 rounded-xl h-12 shadow-sm focus-visible:ring-blue-500/30"
+            className="bg-white/80 dark:bg-gray-900/80 border-gray-200/80 dark:border-gray-800 rounded-xl h-12 shadow-sm focus-visible:ring-blue-500/50 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="message" className="text-gray-700 font-semibold ml-1">Message Body</Label>
-          <div className="bg-white rounded-xl border border-gray-200/80 overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-blue-500/30 transition-shadow">
+          <Label htmlFor="message" className="text-gray-700 dark:text-gray-300 font-semibold ml-1">Message Body</Label>
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200/80 dark:border-gray-800 overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-blue-500/50 transition-all duration-200">
+            {/* Faux Editor Toolbar */}
+            <div className="flex items-center gap-1 border-b border-gray-100 dark:border-gray-800 p-2 bg-gray-50/50 dark:bg-gray-800/30">
+              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-lg transition-colors" onClick={() => insertTag('b')} title="Bold"><Bold className="h-4 w-4" /></Button>
+              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-lg transition-colors" onClick={() => insertTag('i')} title="Italic"><Italic className="h-4 w-4" /></Button>
+              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-lg transition-colors" onClick={() => insertTag('u')} title="Underline"><Underline className="h-4 w-4" /></Button>
+              <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-1" />
+              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-lg transition-colors" onClick={() => insertTag('a href=""')} title="Link"><Link2 className="h-4 w-4" /></Button>
+              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded-lg transition-colors" onClick={() => insertTag('ul')} title="List"><List className="h-4 w-4" /></Button>
+            </div>
+            
             <textarea
               value={message}
               onChange={e => setMessage(e.target.value)}
-              className="w-full h-[280px] p-4 border-none focus:outline-none resize-none"
-              placeholder="Write your message here. You can use simple HTML like <b>bold</b> or <br> for newlines."
+              className="w-full h-[240px] p-4 bg-transparent border-none focus:outline-none resize-none text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 leading-relaxed"
+              placeholder="Write your message here. You can use the formatting toolbar or type simple HTML..."
             />
           </div>
+          {feedback && (
+            <p className={`text-sm mt-2 px-1 ${feedback.type === 'error' ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+              {feedback.text}
+            </p>
+          )}
         </div>
 
         <Button 
           type="submit" 
-          className="h-12 w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl shadow-lg shadow-blue-600/20 transition-all font-semibold group"
+          className="h-12 w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl shadow-lg shadow-blue-600/20 dark:shadow-blue-900/40 transition-all duration-300 font-semibold group overflow-hidden relative"
           disabled={sending || selectedIds.size === 0}
         >
           {sending ? (
-            <>
+            <div className="flex items-center justify-center relative z-10">
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               Sending Broadcast...
-            </>
+            </div>
           ) : (
-            <>
-              <Send className="mr-2 h-5 w-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            <div className="flex items-center justify-center relative z-10">
+              <Send className="mr-2 h-5 w-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
               Send Email
-            </>
+            </div>
           )}
         </Button>
       </form>
