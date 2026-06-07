@@ -62,6 +62,7 @@ export default function AdminDashboard() {
                           handleSort={actions.handleSort} openUserProfile={actions.openUserProfile} copyToClipboard={actions.copyToClipboard} 
                           handleDeleteUser={actions.handleDeleteUser} saveSkills={actions.saveSkills} currentPage={state.currentPage} 
                           setCurrentPage={actions.setCurrentPage} totalPages={state.totalPages} filteredCount={state.filteredAndSortedUsers.length} 
+                          updateProfileStatus={actions.updateProfileStatus}
                         />
                       </motion.div>
                     ) : (

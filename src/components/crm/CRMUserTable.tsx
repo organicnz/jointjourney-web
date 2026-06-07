@@ -9,6 +9,16 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown, Edit2, Check, X, Copy, Trash2, Ghost, Loader2 } from "lucide-react"
 import { UserData, SortConfig } from "./types"
+import { CRMBadgeList } from "./CRMBadge"
+import { InlineStatusSelect } from "./InlineStatusSelect"
+
+export function getOnlineStatus(lastSignInAt?: string) {
+  if (!lastSignInAt) return 'bg-gray-300'
+  const diff = Date.now() - new Date(lastSignInAt).getTime()
+  if (diff < 1000 * 60 * 60 * 24) return 'bg-emerald-500'
+  if (diff < 1000 * 60 * 60 * 24 * 7) return 'bg-amber-500'
+  return 'bg-gray-300'
+}
 
 export function CRMUserTable({
   users,
@@ -25,7 +35,8 @@ export function CRMUserTable({
   currentPage,
   setCurrentPage,
   totalPages,
-  filteredCount
+  filteredCount,
+  updateProfileStatus
 }: {
   users: UserData[],
   loading: boolean,
@@ -41,7 +52,8 @@ export function CRMUserTable({
   currentPage: number,
   setCurrentPage: (p: (prev: number) => number) => void,
   totalPages: number,
-  filteredCount: number
+  filteredCount: number,
+  updateProfileStatus: (id: string, newStatus: string) => void
 }) {
   const [editingUserId, setEditingUserId] = useState<string | null>(null)
   const [editSkillsValue, setEditSkillsValue] = useState("")
@@ -173,10 +185,11 @@ export function CRMUserTable({
                       </div>
                     </TableCell>
                     
-                    <TableCell>
-                      <Badge variant={getStatusBadgeVariant(user.status || 'Lead')} className="pointer-events-none capitalize shadow-sm">
-                        {user.status || 'Lead'}
-                      </Badge>
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <InlineStatusSelect 
+                        status={user.status || 'Lead'} 
+                        onStatusChange={(newStatus) => updateProfileStatus(user.id, newStatus)} 
+                      />
                     </TableCell>
 
                     <TableCell className="min-w-[150px]" onClick={(e) => e.stopPropagation()}>
@@ -209,12 +222,16 @@ export function CRMUserTable({
                         </div>
                       ) : (
                         <div 
-                          className="flex items-center justify-between px-3 py-1.5 -mx-3 rounded-lg hover:bg-gray-100/80 dark:hover:bg-gray-800/80 cursor-text transition-colors group/edit"
+                          className="flex items-center justify-between px-3 py-1.5 -mx-3 rounded-lg hover:bg-gray-100/80 dark:hover:bg-gray-800/80 cursor-pointer transition-colors group/edit"
                           onClick={() => startEditingSkills(user)}
                         >
-                          <span className={user.special_skills ? "text-gray-700 dark:text-gray-300 text-sm font-medium" : "text-gray-400 dark:text-gray-600 italic text-sm"}>
-                            {user.special_skills || "Add skills..."}
-                          </span>
+                          {user.special_skills ? (
+                            <CRMBadgeList tagsString={user.special_skills} />
+                          ) : (
+                            <span className="text-gray-400 dark:text-gray-600 italic text-sm">
+                              Add tags...
+                            </span>
+                          )}
                           <Edit2 className="h-3.5 w-3.5 text-gray-400 opacity-0 group-hover/edit:opacity-100 transition-opacity" />
                         </div>
                       )}

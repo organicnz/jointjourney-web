@@ -8,6 +8,7 @@ import { CSS } from "@dnd-kit/utilities"
 import { UserData } from "./types"
 import { Mail, Clock, MoreVertical, ExternalLink } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { CRMBadgeList } from "./CRMBadge"
 
 // --- SORTABLE CARD COMPONENT ---
 function SortableUserCard({ user, onClick }: { user: UserData, onClick: (u: UserData) => void }) {
@@ -53,8 +54,8 @@ function SortableUserCard({ user, onClick }: { user: UserData, onClick: (u: User
       </div>
       
       {user.special_skills && (
-        <div className="mt-2 text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 px-2 py-1 rounded truncate border border-gray-100 dark:border-gray-800">
-          {user.special_skills}
+        <div className="mt-3">
+          <CRMBadgeList tagsString={user.special_skills} />
         </div>
       )}
       
