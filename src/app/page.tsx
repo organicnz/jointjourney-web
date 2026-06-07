@@ -3,9 +3,10 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
-export default function Home({ searchParams }: { searchParams: { code?: string } }) {
-  if (searchParams?.code) {
-    redirect(`/auth/callback?code=${searchParams.code}`);
+export default async function Home({ searchParams }: { searchParams: Promise<{ code?: string }> }) {
+  const params = await searchParams;
+  if (params?.code) {
+    redirect(`/auth/callback?code=${params.code}`);
   }
 
   return (
