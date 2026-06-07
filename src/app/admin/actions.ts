@@ -157,3 +157,24 @@ export async function deleteUserAction(userId: string) {
 
   return { success: true }
 }
+
+export async function bulkUpdateUserStatusAction(userIds: string[], status: string) {
+  await verifyAdmin()
+  
+  const supabaseAdmin = createAdminClient()
+  const errors = []
+  
+  for (const userId of userIds) {
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+      user_metadata: { status }
+    })
+    if (error) errors.push({ userId, error })
+  }
+  
+  if (errors.length > 0) {
+    console.error("Failed to update some user statuses:", errors)
+    throw new Error(`Failed to update ${errors.length} users`)
+  }
+
+  return { success: true }
+}

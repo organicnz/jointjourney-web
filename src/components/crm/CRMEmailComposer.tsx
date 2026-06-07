@@ -4,6 +4,7 @@ import { useState } from "react"
 import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
 import { sendAdminEmailAction } from "@/app/admin/actions"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -29,16 +30,15 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
     }
 
     setSending(true)
-    setFeedback(null)
     
     try {
       const res = await sendAdminEmailAction(Array.from(selectedIds), subject, message)
-      setFeedback({ type: 'success', text: `Successfully sent email to ${res.count} users!` })
+      toast.success(`Successfully sent email to ${res.count} users!`)
       setSubject("")
       setMessage("")
       onSent()
     } catch (err: any) {
-      setFeedback({ type: 'error', text: err.message || "Failed to send email." })
+      toast.error(err.message || "Failed to send email.")
     } finally {
       setSending(false)
     }
@@ -89,15 +89,6 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
             />
           </div>
         </div>
-
-        {feedback && (
-          <motion.div 
-            initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
-            className={`p-4 rounded-xl text-sm font-medium border shadow-sm ${feedback.type === 'success' ? 'bg-green-50 border-green-100 text-green-700' : 'bg-red-50 border-red-100 text-red-700'}`}
-          >
-            {feedback.text}
-          </motion.div>
-        )}
 
         <Button 
           type="submit" 

@@ -57,6 +57,14 @@ export function CRMUserTable({
     }
   }
 
+  const getOnlineStatus = (lastSignIn?: string) => {
+    if (!lastSignIn) return 'bg-gray-300'
+    const daysSince = (new Date().getTime() - new Date(lastSignIn).getTime()) / (1000 * 3600 * 24)
+    if (daysSince < 1) return 'bg-green-500' // < 24h
+    if (daysSince < 7) return 'bg-yellow-400' // < 7d
+    return 'bg-gray-300'
+  }
+
   const startEditingSkills = (user: UserData) => {
     setEditingUserId(user.id)
     setEditSkillsValue(user.special_skills || "")
@@ -150,8 +158,11 @@ export function CRMUserTable({
                     </TableCell>
                     <TableCell className="font-medium max-w-[180px] truncate" title={user.email}>
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
-                          <span className="text-blue-700 font-bold text-xs uppercase">{user.email?.charAt(0) || '?'}</span>
+                        <div className="relative flex-shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-100 flex items-center justify-center">
+                            <span className="text-blue-700 font-bold text-xs uppercase">{user.email?.charAt(0) || '?'}</span>
+                          </div>
+                          <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-white rounded-full ${getOnlineStatus(user.last_sign_in_at)}`} />
                         </div>
                         <span className="truncate">{user.email || 'No email'}</span>
                         {user.email && (

@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { getUsersAction, updateUserSkillsAction, deleteUserAction, updateUserProfileDetailsAction } from "./actions"
+import { toast } from "sonner"
+import { getUsersAction, updateUserSkillsAction, deleteUserAction, updateUserProfileDetailsAction, bulkUpdateUserStatusAction } from "./actions"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Search, Download, LayoutList, KanbanSquare } from "lucide-react"
@@ -13,7 +14,9 @@ import { CRMEmailComposer } from "@/components/crm/CRMEmailComposer"
 import { CRMUserProfileSheet } from "@/components/crm/CRMUserProfileSheet"
 import { CRMUserTable } from "@/components/crm/CRMUserTable"
 import { CRMKanbanBoard } from "@/components/crm/CRMKanbanBoard"
+import { CRMCommandPalette } from "@/components/crm/CRMCommandPalette"
 import { UserData, SortConfig, Segment } from "@/components/crm/types"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState<UserData[]>([])
@@ -100,6 +103,7 @@ export default function AdminDashboard() {
     else next.add(id)
     setSelectedIds(next)
   }
+  const selectAll = () => setSelectedIds(new Set(filteredAndSortedUsers.map(u => u.id)))
   const copyToClipboard = (text: string) => navigator.clipboard.writeText(text)
 
   const handleDeleteUser = async (id: string, e?: React.MouseEvent) => {
@@ -110,14 +114,16 @@ export default function AdminDashboard() {
       setUsers(prev => prev.filter(u => u.id !== id))
       setSelectedIds(prev => { const next = new Set(prev); next.delete(id); return next })
       if (selectedUser?.id === id) setIsSheetOpen(false)
-    } catch (err: any) { alert("Failed to delete user.") }
+      toast.success("User deleted successfully")
+    } catch (err: any) { toast.error("Failed to delete user") }
   }
 
   const saveSkills = async (userId: string, skills: string) => {
     try {
       await updateUserSkillsAction(userId, skills)
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, special_skills: skills } : u))
-    } catch (err) { alert("Failed to save skills") }
+      toast.success("Skills updated")
+    } catch (err) { toast.error("Failed to save skills") }
   }
 
   const updateProfileStatus = async (userId: string, newStatus: string) => {
@@ -125,7 +131,8 @@ export default function AdminDashboard() {
       await updateUserProfileDetailsAction(userId, { status: newStatus })
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, status: newStatus } : u))
       if (selectedUser?.id === userId) setSelectedUser({ ...selectedUser, status: newStatus })
-    } catch (err) { alert("Failed to update status") }
+      toast.success(`Status changed to ${newStatus}`)
+    } catch (err) { toast.error("Failed to update status") }
   }
 
   const saveProfileNotes = async () => {
@@ -135,8 +142,21 @@ export default function AdminDashboard() {
       await updateUserProfileDetailsAction(selectedUser.id, { crm_notes: notesValue })
       setUsers(prev => prev.map(u => u.id === selectedUser.id ? { ...u, crm_notes: notesValue } : u))
       setSelectedUser({ ...selectedUser, crm_notes: notesValue })
-    } catch (err) { alert("Failed to save notes") }
+      toast.success("Notes auto-saved")
+    } catch (err) { toast.error("Failed to save notes") }
     finally { setSavingProfileId(null) }
+  }
+
+  const handleBulkStatusUpdate = async (newStatus: string) => {
+    if (selectedIds.size === 0) return
+    try {
+      await bulkUpdateUserStatusAction(Array.from(selectedIds), newStatus)
+      setUsers(prev => prev.map(u => selectedIds.has(u.id) ? { ...u, status: newStatus } : u))
+      toast.success(`Successfully updated ${selectedIds.size} users to ${newStatus}`)
+      setSelectedIds(new Set())
+    } catch (err) {
+      toast.error("Failed to update user statuses")
+    }
   }
 
   const openUserProfile = (user: UserData) => {
@@ -211,6 +231,24 @@ export default function AdminDashboard() {
                   onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1) }}
                 />
               </div>
+
+              {selectedIds.size > 0 && (
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex-shrink-0">
+                  <Select onValueChange={handleBulkStatusUpdate}>
+                    <SelectTrigger className="h-10 bg-blue-50 border-blue-200 text-blue-700 w-36 shadow-sm font-semibold rounded-xl">
+                      <SelectValue placeholder="Bulk Action" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl shadow-xl border-gray-100">
+                      <SelectItem value="Lead">Mark as Lead</SelectItem>
+                      <SelectItem value="Active">Mark as Active</SelectItem>
+                      <SelectItem value="VIP">Mark as VIP</SelectItem>
+                      <SelectItem value="Inactive">Mark as Inactive</SelectItem>
+                      <SelectItem value="Banned" className="text-red-600">Ban Users</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </motion.div>
+              )}
+
               <Button variant="outline" className="rounded-xl h-10 shadow-sm" onClick={exportToCSV}>
                 <Download className="h-4 w-4 mr-2" /> Export
               </Button>
@@ -278,6 +316,14 @@ export default function AdminDashboard() {
         notesValue={notesValue} setNotesValue={setNotesValue} savingProfileId={savingProfileId}
         updateProfileStatus={updateProfileStatus} saveProfileNotes={saveProfileNotes}
         setSelectedIds={setSelectedIds} handleDeleteUser={handleDeleteUser}
+      />
+
+      <CRMCommandPalette 
+        users={users}
+        openUserProfile={openUserProfile}
+        exportToCSV={exportToCSV}
+        setViewMode={setViewMode}
+        selectAll={selectAll}
       />
     </div>
   )
