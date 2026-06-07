@@ -2,19 +2,19 @@
 
 import { useEffect, useState, useMemo } from "react"
 import dynamic from "next/dynamic"
-import { getUsersAction, sendAdminEmailAction } from "./actions"
+import { getUsersAction, sendAdminEmailAction, updateUserSkillsAction, deleteUserAction } from "./actions"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, Mail, Send, Search, Download, ArrowUpDown } from "lucide-react"
+import { Loader2, Mail, Send, Search, Download, ArrowUpDown, Edit2, Check, X, Copy, Trash2 } from "lucide-react"
 
 // Import ReactQuill dynamically to avoid SSR issues
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
 import "react-quill/dist/quill.snow.css"
 
-type UserData = { id: string, email?: string, created_at: string, last_sign_in_at?: string }
+type UserData = { id: string, email?: string, created_at: string, last_sign_in_at?: string, special_skills?: string }
 type SortConfig = { key: keyof UserData; direction: 'asc' | 'desc' } | null
 
 export default function AdminDashboard() {
@@ -28,12 +28,21 @@ export default function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
+  // Inline Editing State
+  const [editingUserId, setEditingUserId] = useState<string | null>(null)
+  const [editSkillsValue, setEditSkillsValue] = useState("")
+  const [savingSkillsId, setSavingSkillsId] = useState<string | null>(null)
+
   const [subject, setSubject] = useState("")
   const [message, setMessage] = useState("")
   const [sending, setSending] = useState(false)
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
   useEffect(() => {
+    loadUsers()
+  }, [])
+
+  const loadUsers = () => {
     getUsersAction()
       .then(data => {
         setUsers(data)
@@ -44,14 +53,18 @@ export default function AdminDashboard() {
         setFeedback({ type: 'error', text: "Failed to load users" })
         setLoading(false)
       })
-  }, [])
+  }
 
   // Memoized Filtering, Sorting, and Pagination
   const filteredAndSortedUsers = useMemo(() => {
     let result = [...users]
 
     if (searchQuery) {
-      result = result.filter(u => u.email?.toLowerCase().includes(searchQuery.toLowerCase()))
+      const q = searchQuery.toLowerCase()
+      result = result.filter(u => 
+        u.email?.toLowerCase().includes(q) || 
+        u.special_skills?.toLowerCase().includes(q)
+      )
     }
 
     if (sortConfig) {
@@ -87,12 +100,13 @@ export default function AdminDashboard() {
     const targetUsers = selectedIds.size > 0 ? users.filter(u => selectedIds.has(u.id)) : filteredAndSortedUsers
     if (targetUsers.length === 0) return
 
-    const headers = ['ID', 'Email', 'Joined', 'Last Sign In']
+    const headers = ['ID', 'Email', 'Joined', 'Last Sign In', 'Special Skills']
     const rows = targetUsers.map(u => [
       u.id, 
       u.email || '', 
       new Date(u.created_at).toISOString(), 
-      u.last_sign_in_at ? new Date(u.last_sign_in_at).toISOString() : ''
+      u.last_sign_in_at ? new Date(u.last_sign_in_at).toISOString() : '',
+      `"${(u.special_skills || '').replace(/"/g, '""')}"` // Escape quotes for CSV
     ])
     
     const csvContent = "data:text/csv;charset=utf-8," 
@@ -109,10 +123,8 @@ export default function AdminDashboard() {
 
   const toggleAll = () => {
     if (selectedIds.size === paginatedUsers.length) {
-      // If all currently visible are selected, clear all
       setSelectedIds(new Set())
     } else {
-      // Otherwise, select all currently visible
       const newSelected = new Set(selectedIds)
       paginatedUsers.forEach(u => newSelected.add(u.id))
       setSelectedIds(newSelected)
@@ -124,6 +136,48 @@ export default function AdminDashboard() {
     if (next.has(id)) next.delete(id)
     else next.add(id)
     setSelectedIds(next)
+  }
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+  }
+
+  const handleDeleteUser = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!confirm("Are you sure you want to permanently delete this user?")) return
+    
+    try {
+      await deleteUserAction(id)
+      setUsers(prev => prev.filter(u => u.id !== id))
+      setSelectedIds(prev => {
+        const next = new Set(prev)
+        next.delete(id)
+        return next
+      })
+      setFeedback({ type: 'success', text: "User successfully deleted." })
+    } catch (err: any) {
+      setFeedback({ type: 'error', text: "Failed to delete user." })
+    }
+  }
+
+  const startEditingSkills = (user: UserData) => {
+    setEditingUserId(user.id)
+    setEditSkillsValue(user.special_skills || "")
+  }
+
+  const saveSkills = async (userId: string) => {
+    setSavingSkillsId(userId)
+    try {
+      await updateUserSkillsAction(userId, editSkillsValue)
+      // Optimistically update the local state
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, special_skills: editSkillsValue } : u))
+      setEditingUserId(null)
+    } catch (err) {
+      console.error(err)
+      setFeedback({ type: 'error', text: "Failed to update user skills." })
+    } finally {
+      setSavingSkillsId(null)
+    }
   }
 
   const handleSendEmail = async (e: React.FormEvent) => {
@@ -170,13 +224,13 @@ export default function AdminDashboard() {
         <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-xl font-semibold text-gray-900">User Directory</h3>
-            <p className="text-sm text-gray-500 mt-1">Manage and communicate with users.</p>
+            <p className="text-sm text-gray-500 mt-1">Manage users, special skills, and communication.</p>
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-64">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
               <Input 
-                placeholder="Search emails..." 
+                placeholder="Search emails or skills..." 
                 className="pl-9 bg-white"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
@@ -201,43 +255,100 @@ export default function AdminDashboard() {
                 <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort('email')}>
                   <div className="flex items-center gap-1">Email <ArrowUpDown className="h-3 w-3" /></div>
                 </TableHead>
+                <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort('special_skills')}>
+                  <div className="flex items-center gap-1">Special Skills <ArrowUpDown className="h-3 w-3" /></div>
+                </TableHead>
                 <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort('created_at')}>
                   <div className="flex items-center gap-1">Joined <ArrowUpDown className="h-3 w-3" /></div>
                 </TableHead>
-                <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort('last_sign_in_at')}>
-                  <div className="flex items-center gap-1">Last Sign In <ArrowUpDown className="h-3 w-3" /></div>
+                <TableHead className="w-12 text-right">
+                  Actions
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="h-48 text-center text-gray-500">
+                  <TableCell colSpan={5} className="h-48 text-center text-gray-500">
                     <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-blue-600" />
                     Loading users...
                   </TableCell>
                 </TableRow>
               ) : paginatedUsers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="h-48 text-center text-gray-500">
+                  <TableCell colSpan={5} className="h-48 text-center text-gray-500">
                     No users found matching your criteria.
                   </TableCell>
                 </TableRow>
               ) : (
                 paginatedUsers.map(user => (
-                  <TableRow key={user.id} className="cursor-pointer" onClick={() => toggleUser(user.id)}>
+                  <TableRow key={user.id} className="cursor-pointer group" onClick={() => toggleUser(user.id)}>
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                       <Checkbox 
                         checked={selectedIds.has(user.id)}
                         onCheckedChange={() => toggleUser(user.id)}
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{user.email || 'No email'}</TableCell>
-                    <TableCell className="text-gray-500 text-sm">
+                    <TableCell className="font-medium max-w-[150px] truncate" title={user.email} onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center gap-2">
+                        {user.email || 'No email'}
+                        {user.email && (
+                          <button onClick={() => copyToClipboard(user.email!)} className="text-gray-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Copy className="h-3 w-3" />
+                          </button>
+                        )}
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="min-w-[200px]" onClick={(e) => e.stopPropagation()}>
+                      {editingUserId === user.id ? (
+                        <div className="flex items-center gap-2">
+                          <Input 
+                            autoFocus
+                            value={editSkillsValue}
+                            onChange={(e) => setEditSkillsValue(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') saveSkills(user.id)
+                              if (e.key === 'Escape') setEditingUserId(null)
+                            }}
+                            className="h-8 text-sm"
+                            placeholder="e.g. React, Marketing"
+                            disabled={savingSkillsId === user.id}
+                          />
+                          {savingSkillsId === user.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                          ) : (
+                            <>
+                              <button onClick={() => saveSkills(user.id)} className="text-green-600 hover:text-green-700">
+                                <Check className="h-4 w-4" />
+                              </button>
+                              <button onClick={() => setEditingUserId(null)} className="text-gray-400 hover:text-gray-600">
+                                <X className="h-4 w-4" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      ) : (
+                        <div 
+                          className="flex items-center justify-between px-2 py-1 -mx-2 rounded hover:bg-gray-100/50 cursor-text"
+                          onClick={() => startEditingSkills(user)}
+                        >
+                          <span className={user.special_skills ? "text-gray-900" : "text-gray-400 italic"}>
+                            {user.special_skills || "Add skills..."}
+                          </span>
+                          <Edit2 className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                      )}
+                    </TableCell>
+
+                    <TableCell className="text-gray-500 text-sm whitespace-nowrap">
                       {new Date(user.created_at).toLocaleDateString()}
                     </TableCell>
-                    <TableCell className="text-gray-500 text-sm">
-                      {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'Never'}
+
+                    <TableCell className="text-right">
+                       <button onClick={(e) => handleDeleteUser(user.id, e)} className="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity p-1">
+                          <Trash2 className="h-4 w-4" />
+                       </button>
                     </TableCell>
                   </TableRow>
                 ))

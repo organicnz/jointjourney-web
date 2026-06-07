@@ -33,6 +33,10 @@ serve(async (req) => {
       subject = "Reset your password"
       actionText = "Reset Password"
       description = "We received a request to reset your password. Click the button below to proceed."
+    } else if (email_action_type === 'magiclink') {
+      subject = "Your Magic Link to JointJourney"
+      actionText = "Sign In"
+      description = "Click the button below to instantly sign in to your account. No password required."
     }
 
     const htmlContent = `

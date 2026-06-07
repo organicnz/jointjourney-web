@@ -42,8 +42,25 @@ export async function getUsersAction() {
     id: user.id,
     email: user.email,
     created_at: user.created_at,
-    last_sign_in_at: user.last_sign_in_at
+    last_sign_in_at: user.last_sign_in_at,
+    special_skills: user.user_metadata?.special_skills || ""
   }))
+}
+
+export async function updateUserSkillsAction(userId: string, skills: string) {
+  await verifyAdmin()
+  
+  const supabaseAdmin = createAdminClient()
+  const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+    user_metadata: { special_skills: skills }
+  })
+  
+  if (error) {
+    console.error("Failed to update user skills:", error)
+    throw new Error("Failed to update user skills")
+  }
+
+  return { success: true }
 }
 
 export async function sendAdminEmailAction(userIds: string[], subject: string, message: string) {
@@ -102,9 +119,23 @@ export async function sendAdminEmailAction(userIds: string[], subject: string, m
     )
     
     await Promise.all(promises)
-    return { success: true, count: targetEmails.length }
+    return { success: true, count: userIds.length }
   } catch (err) {
     console.error("Failed to send emails via Resend:", err)
     throw new Error("Failed to send emails")
   }
+}
+
+export async function deleteUserAction(userId: string) {
+  await verifyAdmin()
+  
+  const supabaseAdmin = createAdminClient()
+  const { error } = await supabaseAdmin.auth.admin.deleteUser(userId)
+  
+  if (error) {
+    console.error("Failed to delete user:", error)
+    throw new Error("Failed to delete user")
+  }
+
+  return { success: true }
 }
