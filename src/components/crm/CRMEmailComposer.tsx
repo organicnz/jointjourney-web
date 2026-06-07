@@ -8,7 +8,9 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, Mail, Send } from "lucide-react"
+import { Loader2, Mail, Send, FileText } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
 
@@ -17,6 +19,18 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
   const [message, setMessage] = useState("")
   const [sending, setSending] = useState(false)
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+
+  const quickTemplates = {
+    welcome: { sub: "Welcome to JointJourney!", body: "<p>Hi there,</p><p>Welcome to JointJourney. We are thrilled to have you!</p>" },
+    warning: { sub: "Account Notice", body: "<p>Hello,</p><p>Please note that your account requires immediate attention.</p>" },
+    followUp: { sub: "Following Up", body: "<p>Hi,</p><p>Just checking in to see if you needed any help!</p>" }
+  }
+
+  const applyTemplate = (key: keyof typeof quickTemplates) => {
+    setSubject(quickTemplates[key].sub)
+    setMessage(quickTemplates[key].body)
+    toast.success("Template applied")
+  }
 
   const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,15 +69,33 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
 
   return (
     <div className="bg-white/70 backdrop-blur-2xl border border-white/80 rounded-3xl shadow-xl shadow-blue-900/5 overflow-hidden h-fit sticky top-24">
-      <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50/50 via-white/50 to-transparent">
-        <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-          <div className="p-1.5 bg-blue-100 rounded-lg"><Mail className="w-5 h-5 text-blue-600" /></div>
-          Broadcast
-        </h3>
-        <p className="text-sm text-gray-500 mt-2 font-medium">
-          Sending to <span className="font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{selectedIds.size}</span> selected users.
-        </p>
-      </div>
+      <CardHeader className="border-b border-gray-100 pb-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <Mail className="h-5 w-5 text-blue-600" />
+              Broadcast Email
+            </CardTitle>
+            <CardDescription>
+              {selectedIds.size === 0 
+                ? "Select users from the table to send emails." 
+                : `Ready to email ${selectedIds.size} users.`}
+            </CardDescription>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8 rounded-xl">
+                <FileText className="h-4 w-4 mr-2" /> Templates
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="rounded-xl">
+              <DropdownMenuItem onClick={() => applyTemplate('welcome')}>Welcome Email</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => applyTemplate('warning')}>Account Warning</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => applyTemplate('followUp')}>Follow-up</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </CardHeader>
       
       <form onSubmit={handleSendEmail} className="p-6 space-y-5">
         <div className="space-y-2">

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react"
 import { toast } from "sonner"
 import { getUsersAction, updateUserSkillsAction, deleteUserAction, updateUserProfileDetailsAction, bulkUpdateUserStatusAction } from "@/app/admin/actions"
 import { UserData, SortConfig, Segment } from "@/components/crm/types"
+import { AuditLogEntry } from "@/components/crm/CRMAuditLog"
 
 export function useCRM() {
   const [users, setUsers] = useState<UserData[]>([])
@@ -18,6 +19,12 @@ export function useCRM() {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [notesValue, setNotesValue] = useState("")
   const [savingProfileId, setSavingProfileId] = useState<string | null>(null)
+
+  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
+
+  const logActivity = (action: string) => {
+    setAuditLogs(prev => [{ id: Math.random().toString(), action, timestamp: new Date() }, ...prev].slice(0, 50))
+  }
 
   useEffect(() => {
     getUsersAction()
@@ -92,6 +99,7 @@ export function useCRM() {
       setSelectedIds(prev => { const next = new Set(prev); next.delete(id); return next })
       if (selectedUser?.id === id) setIsSheetOpen(false)
       toast.success("User deleted successfully")
+      logActivity(`Deleted user ${id}`)
     } catch (err: any) { toast.error("Failed to delete user") }
   }
 
@@ -100,6 +108,7 @@ export function useCRM() {
       await updateUserSkillsAction(userId, skills)
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, special_skills: skills } : u))
       toast.success("Skills updated")
+      logActivity(`Updated skills for user ${userId}`)
     } catch (err) { toast.error("Failed to save skills") }
   }
 
@@ -109,6 +118,7 @@ export function useCRM() {
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, status: newStatus } : u))
       if (selectedUser?.id === userId) setSelectedUser({ ...selectedUser, status: newStatus })
       toast.success(`Status changed to ${newStatus}`)
+      logActivity(`Changed status to ${newStatus} for user ${userId}`)
     } catch (err) { toast.error("Failed to update status") }
   }
 
@@ -120,6 +130,7 @@ export function useCRM() {
       setUsers(prev => prev.map(u => u.id === selectedUser.id ? { ...u, crm_notes: notesValue } : u))
       setSelectedUser({ ...selectedUser, crm_notes: notesValue })
       toast.success("Notes auto-saved")
+      logActivity(`Saved notes for user ${selectedUser.id}`)
     } catch (err) { toast.error("Failed to save notes") }
     finally { setSavingProfileId(null) }
   }
@@ -130,6 +141,7 @@ export function useCRM() {
       await bulkUpdateUserStatusAction(Array.from(selectedIds), newStatus)
       setUsers(prev => prev.map(u => selectedIds.has(u.id) ? { ...u, status: newStatus } : u))
       toast.success(`Successfully updated ${selectedIds.size} users to ${newStatus}`)
+      logActivity(`Bulk updated ${selectedIds.size} users to ${newStatus}`)
       setSelectedIds(new Set())
     } catch (err) {
       toast.error("Failed to update user statuses")
@@ -159,19 +171,20 @@ export function useCRM() {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+    logActivity(`Exported ${targetUsers.length} users to CSV`)
   }
 
   return {
     state: {
       users, loading, viewMode, searchQuery, activeSegment, currentPage, totalPages,
       filteredAndSortedUsers, paginatedUsers, selectedIds,
-      selectedUser, isSheetOpen, notesValue, savingProfileId
+      selectedUser, isSheetOpen, notesValue, savingProfileId, auditLogs
     },
     actions: {
       setViewMode, setSearchQuery, setActiveSegment, setCurrentPage,
       toggleAll, toggleUser, selectAll, copyToClipboard, handleSort,
       handleDeleteUser, saveSkills, updateProfileStatus, saveProfileNotes, handleBulkStatusUpdate,
-      openUserProfile, exportToCSV, setIsSheetOpen, setNotesValue, setSelectedIds
+      openUserProfile, exportToCSV, setIsSheetOpen, setNotesValue, setSelectedIds, logActivity
     }
   }
 }

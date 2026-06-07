@@ -3,9 +3,10 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, Download, LayoutList, KanbanSquare } from "lucide-react"
+import { Search, Download, LayoutList, KanbanSquare, Moon, Sun } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Segment } from "./types"
+import { useTheme } from "next-themes"
 
 export function CRMToolbar({
   viewMode, setViewMode,
@@ -24,12 +25,14 @@ export function CRMToolbar({
   activeSegment: Segment
   setActiveSegment: (s: Segment) => void
 }) {
+  const { theme, setTheme } = useTheme()
+  
   return (
     <>
-      <div className="p-6 border-b border-gray-100 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+      <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
         <div>
-          <h3 className="text-2xl font-bold tracking-tight text-gray-900">User Directory</h3>
-          <p className="text-sm text-gray-500 mt-1 font-medium">Manage and segment your user base.</p>
+          <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">User Directory</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Manage and segment your user base.</p>
         </div>
         
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
@@ -75,8 +78,16 @@ export function CRMToolbar({
             </motion.div>
           )}
 
-          <Button variant="outline" className="rounded-xl h-10 shadow-sm" onClick={exportToCSV}>
+          <Button variant="outline" className="rounded-xl h-10 shadow-sm dark:bg-gray-800 dark:border-gray-700" onClick={exportToCSV}>
             <Download className="h-4 w-4 mr-2" /> Export
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            className="rounded-xl h-10 w-10 p-0 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100" 
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          >
+            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
         </div>
       </div>
