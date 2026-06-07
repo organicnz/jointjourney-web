@@ -94,30 +94,30 @@ export function CRMUserTable({
 
   return (
     <div className="flex flex-col flex-1 h-full">
-      <div className="overflow-x-auto flex-1">
-        <Table>
-          <TableHeader className="bg-gray-50/30 dark:bg-gray-800/30">
-            <TableRow className="hover:bg-transparent border-gray-100 dark:border-gray-800">
-              <TableHead className="w-14 text-center">
+      <div className="overflow-x-auto flex-1 p-2">
+        <Table className="border-separate border-spacing-y-2">
+          <TableHeader className="bg-transparent">
+            <TableRow className="hover:bg-transparent border-none">
+              <TableHead className="w-14 text-center pb-2">
                 <Checkbox 
                   checked={paginatedUsers.length > 0 && paginatedUsers.every(u => selectedIds.has(u.id))}
                   onCheckedChange={toggleAll}
-                  className="rounded-md border-gray-300"
+                  className="rounded-md border-gray-300 dark:border-gray-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                 />
               </TableHead>
-              <TableHead className="cursor-pointer hover:text-blue-600 transition-colors py-4" onClick={() => handleSort('email')}>
-                <div className="flex items-center gap-2 font-semibold">User <ArrowUpDown className="h-3 w-3" /></div>
+              <TableHead className="cursor-pointer hover:text-blue-600 transition-colors pb-2 text-xs font-bold uppercase tracking-wider text-gray-500" onClick={() => handleSort('email')}>
+                <div className="flex items-center gap-2">User <ArrowUpDown className="h-3 w-3" /></div>
               </TableHead>
-              <TableHead className="cursor-pointer hover:text-blue-600 transition-colors py-4" onClick={() => handleSort('status')}>
-                <div className="flex items-center gap-2 font-semibold">Status <ArrowUpDown className="h-3 w-3" /></div>
+              <TableHead className="cursor-pointer hover:text-blue-600 transition-colors pb-2 text-xs font-bold uppercase tracking-wider text-gray-500" onClick={() => handleSort('status')}>
+                <div className="flex items-center gap-2">Status <ArrowUpDown className="h-3 w-3" /></div>
               </TableHead>
-              <TableHead className="cursor-pointer hover:text-blue-600 transition-colors py-4" onClick={() => handleSort('special_skills')}>
-                <div className="flex items-center gap-2 font-semibold">Special Skills <ArrowUpDown className="h-3 w-3" /></div>
+              <TableHead className="cursor-pointer hover:text-blue-600 transition-colors pb-2 text-xs font-bold uppercase tracking-wider text-gray-500" onClick={() => handleSort('special_skills')}>
+                <div className="flex items-center gap-2">Special Skills <ArrowUpDown className="h-3 w-3" /></div>
               </TableHead>
-              <TableHead className="cursor-pointer hover:text-blue-600 transition-colors py-4" onClick={() => handleSort('created_at')}>
-                <div className="flex items-center gap-2 font-semibold">Joined <ArrowUpDown className="h-3 w-3" /></div>
+              <TableHead className="cursor-pointer hover:text-blue-600 transition-colors pb-2 text-xs font-bold uppercase tracking-wider text-gray-500" onClick={() => handleSort('created_at')}>
+                <div className="flex items-center gap-2">Joined <ArrowUpDown className="h-3 w-3" /></div>
               </TableHead>
-              <TableHead className="w-16 text-right font-semibold py-4">
+              <TableHead className="w-16 text-right pb-2 text-xs font-bold uppercase tracking-wider text-gray-500">
                 Actions
               </TableHead>
             </TableRow>
@@ -126,7 +126,7 @@ export function CRMUserTable({
             <AnimatePresence mode="popLayout">
               {loading ? (
                 <MotionTableRow exit={{ opacity: 0 }}>
-                  <TableCell colSpan={6} className="h-64">
+                  <TableCell colSpan={6} className="h-64 border-none">
                     <div className="flex flex-col items-center justify-center text-gray-400">
                       <Loader2 className="h-8 w-8 animate-spin mb-4 text-blue-500" />
                       <p className="font-medium">Loading user directory...</p>
@@ -138,11 +138,12 @@ export function CRMUserTable({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
+                  className="border-none"
                 >
-                  <TableCell colSpan={6} className="h-64">
+                  <TableCell colSpan={6} className="h-64 border-none">
                     <div className="flex flex-col items-center justify-center text-gray-400">
-                      <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800/50 rounded-2xl flex items-center justify-center mb-4">
-                        <Ghost className="h-8 w-8 text-gray-300 dark:text-gray-600" />
+                      <div className="w-16 h-16 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-white/40 dark:border-gray-700/50">
+                        <Ghost className="h-8 w-8 text-gray-400 dark:text-gray-500" />
                       </div>
                       <p className="font-semibold text-gray-900 dark:text-gray-100 mb-1">No users found</p>
                       <p className="text-sm">Try adjusting your segment or search query.</p>
@@ -157,18 +158,18 @@ export function CRMUserTable({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.2, delay: index * 0.03 }}
-                    className="cursor-pointer group hover:bg-blue-50/40 dark:hover:bg-blue-900/20 transition-colors border-gray-100 dark:border-gray-800" 
+                    transition={{ duration: 0.2, delay: index * 0.02 }}
+                    className="cursor-pointer group bg-white/40 dark:bg-gray-800/40 hover:bg-white/80 dark:hover:bg-gray-800/80 backdrop-blur-md transition-all duration-300 border border-white/60 dark:border-gray-700/60 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(37,99,235,0.06)] rounded-2xl overflow-hidden" 
                     onClick={() => openUserProfile(user)}
                   >
-                    <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                    <TableCell className="text-center rounded-l-2xl border-none" onClick={(e) => e.stopPropagation()}>
                       <Checkbox 
                         checked={selectedIds.has(user.id)}
                         onCheckedChange={() => toggleUser(user.id)}
-                        className="rounded-md border-gray-300"
+                        className="rounded-md border-gray-300 dark:border-gray-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                       />
                     </TableCell>
-                    <TableCell className="font-medium max-w-[180px] truncate" title={user.email}>
+                    <TableCell className="font-medium max-w-[180px] truncate border-none" title={user.email}>
                       <div className="flex items-center gap-3">
                         <div className="relative flex-shrink-0">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-100 flex items-center justify-center">
@@ -185,14 +186,14 @@ export function CRMUserTable({
                       </div>
                     </TableCell>
                     
-                    <TableCell onClick={(e) => e.stopPropagation()}>
+                    <TableCell className="border-none" onClick={(e) => e.stopPropagation()}>
                       <InlineStatusSelect 
                         status={user.status || 'Lead'} 
                         onStatusChange={(newStatus) => updateProfileStatus(user.id, newStatus)} 
                       />
                     </TableCell>
 
-                    <TableCell className="min-w-[150px]" onClick={(e) => e.stopPropagation()}>
+                    <TableCell className="min-w-[150px] border-none" onClick={(e) => e.stopPropagation()}>
                       {editingUserId === user.id ? (
                         <div className="flex items-center gap-2">
                           <Input 
@@ -237,11 +238,11 @@ export function CRMUserTable({
                       )}
                     </TableCell>
 
-                    <TableCell className="text-gray-500 text-sm whitespace-nowrap font-medium">
+                    <TableCell className="text-gray-500 text-sm whitespace-nowrap font-medium border-none">
                       {new Date(user.created_at).toLocaleDateString()}
                     </TableCell>
 
-                    <TableCell className="text-right">
+                    <TableCell className="text-right rounded-r-2xl border-none">
                        <button onClick={(e) => handleDeleteUser(user.id, e)} className="text-red-400 hover:text-red-600 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all p-2 rounded-lg" title="Delete User">
                           <Trash2 className="h-4 w-4" />
                        </button>

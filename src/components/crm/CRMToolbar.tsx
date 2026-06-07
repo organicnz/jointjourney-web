@@ -44,27 +44,27 @@ export function CRMToolbar({
         </div>
         
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-          <div className="bg-gray-100/80 p-1 rounded-xl flex items-center shadow-inner">
+          <div className="bg-gray-100/50 dark:bg-gray-800/50 p-1.5 rounded-2xl flex items-center shadow-inner backdrop-blur-md border border-white/40 dark:border-gray-700/50">
             <button 
               onClick={() => setViewMode('list')}
-              className={`p-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 ${viewMode === 'list' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+              className={`p-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-300 flex items-center gap-2 ${viewMode === 'list' ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-md shadow-black/5 scale-105' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'}`}
             >
               <LayoutList className="w-4 h-4" /> List
             </button>
             <button 
               onClick={() => setViewMode('kanban')}
-              className={`p-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 ${viewMode === 'kanban' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+              className={`p-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-300 flex items-center gap-2 ${viewMode === 'kanban' ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-md shadow-black/5 scale-105' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'}`}
             >
               <KanbanSquare className="w-4 h-4" /> Pipeline
             </button>
           </div>
 
-          <div className="relative flex-1 w-full sm:w-56 flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+          <div className="relative flex-1 w-full sm:w-64 flex items-center gap-2">
+            <div className="relative flex-1 group">
+              <Search className="absolute left-3.5 top-3 h-4 w-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
               <Input 
-                placeholder="Search..." 
-                className="pl-9 bg-white/80 dark:bg-gray-800/80 border-gray-200/80 dark:border-gray-700 rounded-xl focus-visible:ring-blue-500/30 transition-all shadow-sm h-10"
+                placeholder="Search directory..." 
+                className="pl-10 bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border-white/80 dark:border-gray-700/80 rounded-2xl focus-visible:ring-2 focus-visible:ring-blue-500/50 transition-all shadow-[0_4px_20px_rgb(0,0,0,0.03)] h-10 font-medium"
                 value={searchQuery}
                 onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1) }}
               />

@@ -102,8 +102,8 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
   }
 
   return (
-    <div className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-2xl border border-white/80 dark:border-gray-800/80 rounded-3xl shadow-xl shadow-blue-900/5 dark:shadow-black/20 overflow-hidden h-fit sticky top-24">
-      <CardHeader className="border-b border-gray-100 dark:border-gray-800/50 pb-4">
+    <div className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-3xl overflow-hidden h-fit sticky top-24">
+      <CardHeader className="border-b border-white/40 dark:border-gray-700/50 pb-4">
         <div className="flex justify-between items-center">
           <div>
             <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">

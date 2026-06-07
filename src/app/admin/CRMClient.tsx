@@ -42,7 +42,7 @@ export default function CRMClient({ initialUsers }: { initialUsers: UserData[] }
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
               
               {/* Main CRM Area */}
-              <div className="xl:col-span-2 bg-white/70 dark:bg-gray-900/70 backdrop-blur-2xl border border-white/80 dark:border-gray-800/80 rounded-3xl shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col min-h-[600px]">
+              <div className="xl:col-span-2 bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-3xl overflow-hidden flex flex-col min-h-[600px]">
                 
                 <CRMToolbar 
                   viewMode={state.viewMode} setViewMode={actions.setViewMode}

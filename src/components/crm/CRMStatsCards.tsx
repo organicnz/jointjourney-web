@@ -55,15 +55,16 @@ export function CRMStatsCards({ users, loading }: { users: UserData[], loading: 
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <Card className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-2xl border-white/50 dark:border-gray-800 shadow-lg shadow-blue-900/5 hover:shadow-blue-900/10 dark:shadow-none transition-shadow">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Users</CardTitle>
-          <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400"><Users className="h-4 w-4" /></div>
+      <Card className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:shadow-[0_8px_30px_rgb(37,99,235,0.1)] transition-all duration-300 relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <CardHeader className="flex flex-row items-center justify-between pb-2 relative z-10">
+          <CardTitle className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">Total Users</CardTitle>
+          <div className="p-2.5 bg-blue-100/50 dark:bg-blue-900/30 rounded-2xl text-blue-600 dark:text-blue-400 backdrop-blur-md border border-white/50 dark:border-blue-800/50 shadow-sm"><Users className="h-4 w-4" /></div>
         </CardHeader>
-        <CardContent className="relative">
-          <div className="text-4xl font-bold text-gray-900 dark:text-gray-100">{loading ? '-' : metrics.total}</div>
+        <CardContent className="relative z-10">
+          <div className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 tracking-tight">{loading ? '-' : metrics.total}</div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">All time registered accounts</p>
-          <div className="absolute bottom-2 right-4 w-24 h-12 opacity-30 pointer-events-none">
+          <div className="absolute bottom-0 right-0 w-32 h-16 opacity-40 pointer-events-none mix-blend-multiply dark:mix-blend-screen">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={sparklineData.total}>
                 <Line type="monotone" dataKey="value" stroke="#2563eb" strokeWidth={3} dot={false} isAnimationActive={true} />
@@ -73,15 +74,16 @@ export function CRMStatsCards({ users, loading }: { users: UserData[], loading: 
         </CardContent>
       </Card>
       
-      <Card className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-2xl border-white/50 dark:border-gray-800 shadow-lg shadow-blue-900/5 hover:shadow-blue-900/10 dark:shadow-none transition-shadow">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">New Signups</CardTitle>
-          <div className="p-2 bg-green-50 dark:bg-green-900/30 rounded-xl text-green-600 dark:text-green-400"><UserPlus className="h-4 w-4" /></div>
+      <Card className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:shadow-[0_8px_30px_rgb(22,163,74,0.1)] transition-all duration-300 relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <CardHeader className="flex flex-row items-center justify-between pb-2 relative z-10">
+          <CardTitle className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">New Signups</CardTitle>
+          <div className="p-2.5 bg-green-100/50 dark:bg-green-900/30 rounded-2xl text-green-600 dark:text-green-400 backdrop-blur-md border border-white/50 dark:border-green-800/50 shadow-sm"><UserPlus className="h-4 w-4" /></div>
         </CardHeader>
-        <CardContent className="relative">
-          <div className="text-4xl font-bold text-gray-900 dark:text-gray-100">{loading ? '-' : metrics.newSignups}</div>
+        <CardContent className="relative z-10">
+          <div className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 tracking-tight">{loading ? '-' : metrics.newSignups}</div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">Users joined in last 30 days</p>
-          <div className="absolute bottom-2 right-4 w-24 h-12 opacity-30 pointer-events-none">
+          <div className="absolute bottom-0 right-0 w-32 h-16 opacity-40 pointer-events-none mix-blend-multiply dark:mix-blend-screen">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={sparklineData.signups}>
                 <Line type="monotone" dataKey="value" stroke="#16a34a" strokeWidth={3} dot={false} isAnimationActive={true} />
@@ -91,15 +93,16 @@ export function CRMStatsCards({ users, loading }: { users: UserData[], loading: 
         </CardContent>
       </Card>
       
-      <Card className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-2xl border-white/50 dark:border-gray-800 shadow-lg shadow-blue-900/5 hover:shadow-blue-900/10 dark:shadow-none transition-shadow">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Active Users</CardTitle>
-          <div className="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-xl text-purple-600 dark:text-purple-400"><Activity className="h-4 w-4" /></div>
+      <Card className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:shadow-[0_8px_30px_rgb(147,51,234,0.1)] transition-all duration-300 relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <CardHeader className="flex flex-row items-center justify-between pb-2 relative z-10">
+          <CardTitle className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">Active Users</CardTitle>
+          <div className="p-2.5 bg-purple-100/50 dark:bg-purple-900/30 rounded-2xl text-purple-600 dark:text-purple-400 backdrop-blur-md border border-white/50 dark:border-purple-800/50 shadow-sm"><Activity className="h-4 w-4" /></div>
         </CardHeader>
-        <CardContent className="relative">
-          <div className="text-4xl font-bold text-gray-900 dark:text-gray-100">{loading ? '-' : metrics.activeRecently}</div>
+        <CardContent className="relative z-10">
+          <div className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 tracking-tight">{loading ? '-' : metrics.activeRecently}</div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">Signed in during last 30 days</p>
-          <div className="absolute bottom-2 right-4 w-24 h-12 opacity-30 pointer-events-none">
+          <div className="absolute bottom-0 right-0 w-32 h-16 opacity-40 pointer-events-none mix-blend-multiply dark:mix-blend-screen">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={sparklineData.active}>
                 <Line type="monotone" dataKey="value" stroke="#9333ea" strokeWidth={3} dot={false} isAnimationActive={true} />

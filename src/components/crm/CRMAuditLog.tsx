@@ -12,12 +12,13 @@ export type AuditLogEntry = {
 
 export function CRMAuditLog({ logs }: { logs: AuditLogEntry[] }) {
   return (
-    <Card className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-2xl border-white/50 dark:border-gray-800/50 shadow-lg shadow-blue-900/5 h-[400px] flex flex-col">
-      <CardHeader className="flex flex-row items-center gap-3 pb-2 border-b border-gray-100 dark:border-gray-800">
-        <div className="p-2 bg-green-50 dark:bg-green-900/30 rounded-xl text-green-600 dark:text-green-400">
+    <Card className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] h-[400px] flex flex-col relative overflow-hidden group">
+      <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <CardHeader className="flex flex-row items-center gap-3 pb-2 border-b border-white/40 dark:border-gray-700/50 relative z-10">
+        <div className="p-2 bg-green-100/50 dark:bg-green-900/30 rounded-xl text-green-600 dark:text-green-400 backdrop-blur-md shadow-sm border border-white/50 dark:border-green-800/50">
           <Activity className="h-4 w-4" />
         </div>
-        <CardTitle className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+        <CardTitle className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">
           Recent Activity
         </CardTitle>
       </CardHeader>
