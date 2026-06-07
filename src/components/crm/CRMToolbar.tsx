@@ -7,7 +7,6 @@ import { Search, Download, LayoutList, KanbanSquare, Filter } from "lucide-react
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Segment } from "./types"
-import { ThemeToggle } from "@/components/ui/ThemeToggle"
 
 export function CRMToolbar({
   viewMode, setViewMode,
@@ -107,7 +106,6 @@ export function CRMToolbar({
             <Download className="h-4 w-4 mr-2" /> Export
           </Button>
 
-          <ThemeToggle />
         </div>
       </div>
 

@@ -5,6 +5,7 @@ import { signOut } from '@/app/auth/actions'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from '@/components/ui/dropdown-menu'
 import { cn } from "@/lib/utils"
 import { Bell } from 'lucide-react'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 export async function Navbar() {
   const supabase = await createClient()
@@ -14,7 +15,7 @@ export async function Navbar() {
   } = await supabase.auth.getUser()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 dark:border-white/5 bg-white/60 dark:bg-slate-950/60 backdrop-blur-xl supports-[backdrop-filter]:bg-white/40 supports-[backdrop-filter]:dark:bg-slate-950/40 shadow-sm dark:shadow-none transition-colors duration-300">
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between mx-auto px-4 sm:px-8">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
@@ -69,10 +70,13 @@ export async function Navbar() {
                 </DropdownMenu>
               </div>
             ) : (
-              <Link href="/login" className={cn(buttonVariants({ variant: "default", size: "sm" }), "px-6 rounded-full font-semibold")}>
+              <Link href="/login" className={cn(buttonVariants({ variant: "default", size: "sm" }), "px-6 rounded-full font-semibold bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-md hover:shadow-lg transition-all text-white")}>
                 Sign In
               </Link>
             )}
+            <div className="ml-4 pl-4 border-l border-gray-200 dark:border-gray-800 flex items-center h-8">
+              <ThemeToggle />
+            </div>
           </nav>
         </div>
       </div>

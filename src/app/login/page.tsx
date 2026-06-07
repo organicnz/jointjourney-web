@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Loader2, Mail, ArrowRight } from 'lucide-react'
 import { LiquidGlassBackground } from '@/components/ui/LiquidGlassBackground'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
@@ -35,7 +34,6 @@ export default function LoginPage() {
       
       <LiquidGlassBackground />
       <div className="absolute top-6 right-6">
-        <ThemeToggle />
       </div>
 
       {/* Login Container */}
