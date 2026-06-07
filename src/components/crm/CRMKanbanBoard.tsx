@@ -26,25 +26,25 @@ function SortableUserCard({ user, onClick }: { user: UserData, onClick: (u: User
       {...attributes}
       {...listeners}
       onClick={() => onClick(user)}
-      className="bg-white/90 backdrop-blur border border-gray-100 p-4 rounded-xl shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing transition-shadow mb-3 group"
+      className="bg-white/90 dark:bg-gray-900/90 backdrop-blur border border-gray-100 dark:border-gray-800 p-4 rounded-xl shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing transition-shadow mb-3 group"
     >
       <div className="flex items-center gap-2 mb-2">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
-          <span className="text-blue-700 font-bold text-xs uppercase">{user.email?.charAt(0) || '?'}</span>
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/40 dark:to-blue-900/20 border border-blue-100 dark:border-blue-800 flex items-center justify-center flex-shrink-0">
+          <span className="text-blue-700 dark:text-blue-400 font-bold text-xs uppercase">{user.email?.charAt(0) || '?'}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-900 truncate" title={user.email}>{user.email}</p>
+          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate" title={user.email}>{user.email}</p>
         </div>
         <div onClick={(e) => e.stopPropagation()}>
           <DropdownMenu>
-            <DropdownMenuTrigger className="p-1 rounded-md text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors focus:outline-none">
+            <DropdownMenuTrigger className="p-1 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none">
               <MoreVertical className="w-4 h-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40 rounded-xl">
-              <DropdownMenuItem onClick={() => onClick(user)} className="cursor-pointer">
+            <DropdownMenuContent align="end" className="w-40 rounded-xl dark:border-gray-800">
+              <DropdownMenuItem onClick={() => onClick(user)} className="cursor-pointer dark:focus:bg-gray-800">
                 <ExternalLink className="w-4 h-4 mr-2" /> View Profile
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => window.location.href = `mailto:${user.email}`} className="cursor-pointer">
+              <DropdownMenuItem onClick={() => window.location.href = `mailto:${user.email}`} className="cursor-pointer dark:focus:bg-gray-800">
                 <Mail className="w-4 h-4 mr-2" /> Email User
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -53,12 +53,12 @@ function SortableUserCard({ user, onClick }: { user: UserData, onClick: (u: User
       </div>
       
       {user.special_skills && (
-        <div className="mt-2 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded truncate border border-gray-100">
+        <div className="mt-2 text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 px-2 py-1 rounded truncate border border-gray-100 dark:border-gray-800">
           {user.special_skills}
         </div>
       )}
       
-      <div className="mt-3 flex items-center justify-between text-xs text-gray-400">
+      <div className="mt-3 flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
         <div className="flex items-center gap-1" title="Joined">
           <Clock className="w-3 h-3" />
           {new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
@@ -76,10 +76,10 @@ function SortableUserCard({ user, onClick }: { user: UserData, onClick: (u: User
 // --- COLUMN COMPONENT ---
 function KanbanColumn({ id, title, users, openUserProfile }: { id: string, title: string, users: UserData[], openUserProfile: (u: UserData) => void }) {
   return (
-    <div className="flex flex-col flex-1 min-w-[280px] max-w-[320px] bg-gray-50/50 backdrop-blur-xl border border-white/50 rounded-2xl p-4 shadow-sm h-[70vh] overflow-hidden">
+    <div className="flex flex-col flex-1 min-w-[280px] max-w-[320px] bg-gray-50/50 dark:bg-gray-900/30 backdrop-blur-xl border border-white/50 dark:border-gray-800/50 rounded-2xl p-4 shadow-sm h-[70vh] overflow-hidden">
       <div className="flex items-center justify-between mb-4 px-1">
-        <h3 className="font-bold text-gray-700 uppercase tracking-wider text-sm">{title}</h3>
-        <span className="bg-white text-gray-500 text-xs font-bold px-2 py-1 rounded-md shadow-sm">{users.length}</span>
+        <h3 className="font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider text-sm">{title}</h3>
+        <span className="bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs font-bold px-2 py-1 rounded-md shadow-sm border border-gray-100 dark:border-gray-700">{users.length}</span>
       </div>
       
       <div className="flex-1 overflow-y-auto no-scrollbar pb-10 px-1">
@@ -89,8 +89,8 @@ function KanbanColumn({ id, title, users, openUserProfile }: { id: string, title
           ))}
         </SortableContext>
         {users.length === 0 && (
-          <div className="h-full flex items-center justify-center text-center p-4 border-2 border-dashed border-gray-200 rounded-xl">
-            <p className="text-sm text-gray-400 font-medium">Drop users here</p>
+          <div className="h-full flex items-center justify-center text-center p-4 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-xl">
+            <p className="text-sm text-gray-400 dark:text-gray-600 font-medium">Drop users here</p>
           </div>
         )}
       </div>

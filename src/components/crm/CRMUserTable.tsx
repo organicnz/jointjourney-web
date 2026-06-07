@@ -84,8 +84,8 @@ export function CRMUserTable({
     <div className="flex flex-col flex-1 h-full">
       <div className="overflow-x-auto flex-1">
         <Table>
-          <TableHeader className="bg-gray-50/30">
-            <TableRow className="hover:bg-transparent border-gray-100">
+          <TableHeader className="bg-gray-50/30 dark:bg-gray-800/30">
+            <TableRow className="hover:bg-transparent border-gray-100 dark:border-gray-800">
               <TableHead className="w-14 text-center">
                 <Checkbox 
                   checked={paginatedUsers.length > 0 && paginatedUsers.every(u => selectedIds.has(u.id))}
@@ -129,10 +129,10 @@ export function CRMUserTable({
                 >
                   <TableCell colSpan={6} className="h-64">
                     <div className="flex flex-col items-center justify-center text-gray-400">
-                      <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
-                        <Ghost className="h-8 w-8 text-gray-300" />
+                      <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800/50 rounded-2xl flex items-center justify-center mb-4">
+                        <Ghost className="h-8 w-8 text-gray-300 dark:text-gray-600" />
                       </div>
-                      <p className="font-semibold text-gray-900 mb-1">No users found</p>
+                      <p className="font-semibold text-gray-900 dark:text-gray-100 mb-1">No users found</p>
                       <p className="text-sm">Try adjusting your segment or search query.</p>
                     </div>
                   </TableCell>
@@ -146,7 +146,7 @@ export function CRMUserTable({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.2, delay: index * 0.03 }}
-                    className="cursor-pointer group hover:bg-blue-50/40 transition-colors border-gray-100" 
+                    className="cursor-pointer group hover:bg-blue-50/40 dark:hover:bg-blue-900/20 transition-colors border-gray-100 dark:border-gray-800" 
                     onClick={() => openUserProfile(user)}
                   >
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
@@ -162,9 +162,9 @@ export function CRMUserTable({
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-100 flex items-center justify-center">
                             <span className="text-blue-700 font-bold text-xs uppercase">{user.email?.charAt(0) || '?'}</span>
                           </div>
-                          <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-white rounded-full ${getOnlineStatus(user.last_sign_in_at)}`} />
+                          <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-white dark:border-gray-900 rounded-full ${getOnlineStatus(user.last_sign_in_at)}`} />
                         </div>
-                        <span className="truncate">{user.email || 'No email'}</span>
+                        <span className="truncate text-gray-900 dark:text-gray-100">{user.email || 'No email'}</span>
                         {user.email && (
                           <button onClick={(e) => { e.stopPropagation(); copyToClipboard(user.email!) }} className="text-gray-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity ml-auto" title="Copy Email">
                             <Copy className="h-3.5 w-3.5" />
@@ -190,7 +190,7 @@ export function CRMUserTable({
                               if (e.key === 'Enter') handleSaveSkills(user.id)
                               if (e.key === 'Escape') setEditingUserId(null)
                             }}
-                            className="h-8 text-sm rounded-lg"
+                            className="h-8 text-sm rounded-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
                             placeholder="e.g. React, Marketing"
                             disabled={savingSkillsId === user.id}
                           />
@@ -209,10 +209,10 @@ export function CRMUserTable({
                         </div>
                       ) : (
                         <div 
-                          className="flex items-center justify-between px-3 py-1.5 -mx-3 rounded-lg hover:bg-gray-100/80 cursor-text transition-colors group/edit"
+                          className="flex items-center justify-between px-3 py-1.5 -mx-3 rounded-lg hover:bg-gray-100/80 dark:hover:bg-gray-800/80 cursor-text transition-colors group/edit"
                           onClick={() => startEditingSkills(user)}
                         >
-                          <span className={user.special_skills ? "text-gray-700 text-sm font-medium" : "text-gray-400 italic text-sm"}>
+                          <span className={user.special_skills ? "text-gray-700 dark:text-gray-300 text-sm font-medium" : "text-gray-400 dark:text-gray-600 italic text-sm"}>
                             {user.special_skills || "Add skills..."}
                           </span>
                           <Edit2 className="h-3.5 w-3.5 text-gray-400 opacity-0 group-hover/edit:opacity-100 transition-opacity" />
@@ -239,9 +239,9 @@ export function CRMUserTable({
 
       {/* Pagination Controls */}
       {!loading && totalPages > 1 && (
-        <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-white mt-auto">
-          <p className="text-sm text-gray-500 font-medium">
-            Showing <span className="text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="text-gray-900">{Math.min(currentPage * itemsPerPage, filteredCount)}</span> of <span className="text-gray-900">{filteredCount}</span>
+        <div className="p-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between bg-white dark:bg-gray-900/50 mt-auto">
+          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+            Showing <span className="text-gray-900 dark:text-gray-100">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="text-gray-900 dark:text-gray-100">{Math.min(currentPage * itemsPerPage, filteredCount)}</span> of <span className="text-gray-900 dark:text-gray-100">{filteredCount}</span>
           </p>
           <div className="flex items-center gap-2">
             <Button 
