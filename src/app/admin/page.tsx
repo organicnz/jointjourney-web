@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/utils/supabase/server"
 import CRMClient from "./CRMClient"
-import { UserData } from "@/components/crm/types"
+import { getUsersAction } from "./actions"
 
 export default async function AdminPage() {
   const supabase = await createClient()
@@ -13,17 +13,13 @@ export default async function AdminPage() {
     redirect("/login")
   }
 
-  // 2. Fetch Users Data Server-Side
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .order('created_at', { ascending: false })
-
-  if (error) {
+  // 2. Fetch Users Data Server-Side (Includes emails from auth.users via Admin API)
+  let initialUsers = []
+  try {
+    initialUsers = await getUsersAction()
+  } catch (error) {
     console.error("Error fetching users:", error)
   }
-
-  const initialUsers: UserData[] = data || []
 
   // 3. Render Client Component with pre-fetched data
   return <CRMClient initialUsers={initialUsers} />
