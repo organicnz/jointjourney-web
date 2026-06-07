@@ -4,11 +4,7 @@ import { createClient } from "@/utils/supabase/server"
 import { createAdminClient } from "@/utils/supabase/admin"
 import { Resend } from "resend"
 
-const ADMIN_EMAILS = [
-  "contact@jointjourney.app",
-  "tamerlanium@gmail.com",
-  "Fuad.aliyevcap@gmail.com"
-]
+
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 

@@ -1,12 +1,6 @@
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 
-const ADMIN_EMAILS = [
-  "contact@jointjourney.app",
-  "tamerlanium@gmail.com",
-  "Fuad.aliyevcap@gmail.com"
-]
-
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user }, error } = await supabase.auth.getUser()
@@ -15,7 +9,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect("/login")
   }
 
-  if (!user.email || !ADMIN_EMAILS.includes(user.email)) {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.role !== 'admin') {
     // Alternatively, we could render a 403 Forbidden page here
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-50 text-gray-900">

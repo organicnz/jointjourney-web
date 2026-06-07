@@ -1,0 +1,61 @@
+ libraries        | libraries: admins can write        | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ library_items    | library_items: admins can write    | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ authors          | authors: admins can write          | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ book_authors     | book_authors: admins can write     | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ narrators        | narrators: admins can write        | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ book_narrators   | book_narrators: admins can write   | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ series           | series: admins can write           | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ book_series      | book_series: admins can write      | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ audio_files      | audio_files: admins can write      | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ chapters         | chapters: admins can write         | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ podcast_episodes | podcast_episodes: admins can write | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ collections      | collections: admins can write      | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ collection_items | collection_items: admins can write | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = auth.uid()) AND (profiles.user_type = 'admin'::text))))
+ collection_items | Admins can update collection_items | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = ( SELECT auth.uid() AS uid)) AND (profiles.user_type = 'admin'::text))))
+ library_items    | Admins can update library_items    | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = ( SELECT auth.uid() AS uid)) AND (profiles.user_type = ANY (ARRAY['admin'::text, 'root'::text])))))
+ collection_items | Admins can delete collection_items | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = ( SELECT auth.uid() AS uid)) AND (profiles.user_type = 'admin'::text))))
+ collections      | Admins can update collections      | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = ( SELECT auth.uid() AS uid)) AND (profiles.user_type = 'admin'::text))))
+ collections      | Admins can delete collections      | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = ( SELECT auth.uid() AS uid)) AND (profiles.user_type = 'admin'::text))))
+ podcast_episodes | Admins can update podcast_episodes | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = ( SELECT auth.uid() AS uid)) AND (profiles.user_type = 'admin'::text))))
+ podcast_episodes | Admins can delete podcast_episodes | (EXISTS ( SELECT 1                                                                                                         +
+                  |                                    |    FROM profiles                                                                                                           +
+                  |                                    |   WHERE ((profiles.id = ( SELECT auth.uid() AS uid)) AND (profiles.user_type = 'admin'::text))))
+
