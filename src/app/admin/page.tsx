@@ -48,6 +48,7 @@ export default function AdminDashboard() {
                   setCurrentPage={actions.setCurrentPage} exportToCSV={actions.exportToCSV}
                   selectedIdsCount={state.selectedIds.size} handleBulkStatusUpdate={actions.handleBulkStatusUpdate}
                   activeSegment={state.activeSegment} setActiveSegment={actions.setActiveSegment}
+                  hasNotesFilter={state.hasNotesFilter} setHasNotesFilter={actions.setHasNotesFilter}
                 />
 
                 {/* View Container */}

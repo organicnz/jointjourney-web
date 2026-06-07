@@ -2,8 +2,9 @@ import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { signOut } from '@/app/auth/actions'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from '@/components/ui/dropdown-menu'
 import { cn } from "@/lib/utils"
+import { Bell } from 'lucide-react'
 
 export async function Navbar() {
   const supabase = await createClient()
@@ -25,6 +26,30 @@ export async function Navbar() {
           <nav className="flex items-center">
             {user ? (
               <div className="flex items-center gap-4">
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                    <Bell className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                    <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-blue-600 border-2 border-white dark:border-gray-950"></span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-80 rounded-xl shadow-xl dark:border-gray-800">
+                    <DropdownMenuLabel className="font-semibold text-lg py-3 px-4">Notifications</DropdownMenuLabel>
+                    <DropdownMenuSeparator className="dark:bg-gray-800" />
+                    <div className="max-h-[300px] overflow-y-auto">
+                      <div className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-900/50 cursor-pointer transition-colors border-b border-gray-50 dark:border-gray-800 last:border-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">Welcome to JointJourney! 🎉</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Your account has been successfully verified.</p>
+                        <p className="text-[10px] text-gray-400 mt-2 font-medium">Just now</p>
+                      </div>
+                      <div className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-900/50 cursor-pointer transition-colors border-b border-gray-50 dark:border-gray-800 last:border-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">New Feature: Dark Mode</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">You can now toggle dark mode using the switcher.</p>
+                        <p className="text-[10px] text-gray-400 mt-2 font-medium">1 hour ago</p>
+                      </div>
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
                 <span className="text-sm text-muted-foreground hidden sm:inline-block font-medium">
                   {user.email}
                 </span>

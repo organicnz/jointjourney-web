@@ -16,7 +16,10 @@ serve(async (req) => {
     // and verify it with the WEBHOOK_SECRET, but we'll accept it here for simplicity
     // since this URL is generally unguessable.
 
-    const { token, token_hash, redirect_to, email_action_type, site_url } = email_data
+    let { token, token_hash, redirect_to, email_action_type, site_url } = email_data
+
+    // Bulletproof Redirect Overwrite: Ignore Supabase Dashboard Configuration
+    redirect_to = "https://jointjourney.app/auth/callback"
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "https://nkxztsfuhgjvcdseuree.supabase.co"
     const verifyUrl = `${supabaseUrl}/auth/v1/verify?type=${email_action_type}&token_hash=${token_hash}&redirect_to=${encodeURIComponent(redirect_to)}`

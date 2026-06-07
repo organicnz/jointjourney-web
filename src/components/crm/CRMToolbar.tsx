@@ -3,8 +3,9 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, Download, LayoutList, KanbanSquare } from "lucide-react"
+import { Search, Download, LayoutList, KanbanSquare, Filter } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Segment } from "./types"
 import { ThemeToggle } from "@/components/ui/ThemeToggle"
 
@@ -24,6 +25,8 @@ export function CRMToolbar({
   handleBulkStatusUpdate: (s: string | null) => void
   activeSegment: Segment
   setActiveSegment: (s: Segment) => void
+  hasNotesFilter: boolean | null
+  setHasNotesFilter: (b: boolean | null) => void
 }) {
   
   return (
@@ -50,14 +53,38 @@ export function CRMToolbar({
             </button>
           </div>
 
-          <div className="relative flex-1 w-full sm:w-56">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-            <Input 
-              placeholder="Search..." 
-              className="pl-9 bg-white/80 border-gray-200/80 rounded-xl focus-visible:ring-blue-500/30 transition-all shadow-sm h-10"
-              value={searchQuery}
-              onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1) }}
-            />
+          <div className="relative flex-1 w-full sm:w-56 flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+              <Input 
+                placeholder="Search..." 
+                className="pl-9 bg-white/80 dark:bg-gray-800/80 border-gray-200/80 dark:border-gray-700 rounded-xl focus-visible:ring-blue-500/30 transition-all shadow-sm h-10"
+                value={searchQuery}
+                onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1) }}
+              />
+            </div>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className={`rounded-xl h-10 w-10 p-0 shadow-sm transition-all ${hasNotesFilter !== null ? 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-400' : 'dark:bg-gray-800 dark:border-gray-700'}`}>
+                  <Filter className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 rounded-xl">
+                <DropdownMenuCheckboxItem 
+                  checked={hasNotesFilter === true} 
+                  onCheckedChange={(c) => { setHasNotesFilter(c ? true : null); setCurrentPage(1) }}
+                >
+                  Has Notes
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem 
+                  checked={hasNotesFilter === false} 
+                  onCheckedChange={(c) => { setHasNotesFilter(c ? false : null); setCurrentPage(1) }}
+                >
+                  No Notes
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {selectedIdsCount > 0 && (

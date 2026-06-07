@@ -12,6 +12,7 @@ export function useCRM() {
   
   const [searchQuery, setSearchQuery] = useState("")
   const [activeSegment, setActiveSegment] = useState<Segment>('All')
+  const [hasNotesFilter, setHasNotesFilter] = useState<boolean | null>(null)
   const [sortConfig, setSortConfig] = useState<SortConfig>(null)
   const [currentPage, setCurrentPage] = useState(1)
 
@@ -42,6 +43,11 @@ export function useCRM() {
     if (activeSegment === 'Leads') result = result.filter(u => !u.status || u.status === 'Lead')
     if (activeSegment === 'Banned') result = result.filter(u => u.status === 'Banned')
 
+    if (hasNotesFilter !== null) {
+      if (hasNotesFilter) result = result.filter(u => !!u.crm_notes)
+      else result = result.filter(u => !u.crm_notes)
+    }
+
     if (searchQuery) {
       const q = searchQuery.toLowerCase()
       result = result.filter(u => 
@@ -61,7 +67,7 @@ export function useCRM() {
       })
     }
     return result
-  }, [users, searchQuery, activeSegment, sortConfig])
+  }, [users, searchQuery, activeSegment, sortConfig, hasNotesFilter])
 
   const itemsPerPage = 10
   const paginatedUsers = useMemo(() => {
@@ -178,13 +184,15 @@ export function useCRM() {
     state: {
       users, loading, viewMode, searchQuery, activeSegment, currentPage, totalPages,
       filteredAndSortedUsers, paginatedUsers, selectedIds,
-      selectedUser, isSheetOpen, notesValue, savingProfileId, auditLogs
+      selectedUser, isSheetOpen, notesValue, savingProfileId, auditLogs,
+      hasNotesFilter
     },
     actions: {
       setViewMode, setSearchQuery, setActiveSegment, setCurrentPage,
       toggleAll, toggleUser, selectAll, copyToClipboard, handleSort,
       handleDeleteUser, saveSkills, updateProfileStatus, saveProfileNotes, handleBulkStatusUpdate,
-      openUserProfile, exportToCSV, setIsSheetOpen, setNotesValue, setSelectedIds, logActivity
+      openUserProfile, exportToCSV, setIsSheetOpen, setNotesValue, setSelectedIds, logActivity,
+      setHasNotesFilter
     }
   }
 }
