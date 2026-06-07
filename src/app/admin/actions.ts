@@ -151,24 +151,24 @@ export async function sendAdminEmailAction(userIds: string[], subject: string, m
     </html>
   `
 
-  try {
-    // Send emails individually to avoid users seeing each other in BCC/CC
-    const promises = targetEmails.map(email => 
-      resend.emails.send({
-        from: "JointJourney <contact@jointjourney.app>",
-        to: [email],
-        subject: subject,
-        html: htmlContent
-      })
-    )
-    
-    await Promise.all(promises)
-    return { success: true, count: userIds.length }
-  } catch (err) {
-    console.error("Failed to send emails via Resend:", err)
-    throw new Error("Failed to send emails")
+    try {
+      // Send emails individually to avoid users seeing each other in BCC/CC
+      const promises = targetEmails.map(email => 
+        resend.emails.send({
+          from: "JointJourney <contact@jointjourney.app>",
+          to: [email],
+          subject: subject,
+          html: htmlContent
+        })
+      )
+      
+      await Promise.all(promises)
+      return { success: true, count: targetEmails.length }
+    } catch (err) {
+      console.error("Failed to send emails via Resend:", err)
+      throw new Error("Failed to send emails")
+    }
   }
-}
 
 export async function deleteUserAction(userId: string) {
   await verifyAdmin()
