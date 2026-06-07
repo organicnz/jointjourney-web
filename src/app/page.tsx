@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default function Home({ searchParams }: { searchParams: { code?: string } }) {
+  if (searchParams?.code) {
+    redirect(`/auth/callback?code=${searchParams.code}`);
+  }
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden bg-background">
       {/* Background gradients */}
