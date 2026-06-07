@@ -35,12 +35,13 @@ export function CRMAnalyticsCharts({ users }: { users: UserData[] }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-      <Card className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-2xl border-white/50 dark:border-gray-800 shadow-lg shadow-blue-900/5 dark:shadow-none">
-        <CardHeader className="flex flex-row items-center gap-3 pb-2">
-          <div className="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-xl text-purple-600 dark:text-purple-400"><PieChartIcon className="h-4 w-4" /></div>
-          <CardTitle className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Pipeline Breakdown</CardTitle>
+      <Card className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:shadow-[0_8px_30px_rgb(147,51,234,0.1)] transition-all duration-300 relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <CardHeader className="flex flex-row items-center gap-3 pb-2 relative z-10 border-b border-white/30 dark:border-gray-700/30">
+          <div className="p-2.5 bg-purple-100/50 dark:bg-purple-900/30 rounded-2xl text-purple-600 dark:text-purple-400 backdrop-blur-md shadow-sm border border-white/50 dark:border-purple-800/50"><PieChartIcon className="h-4 w-4" /></div>
+          <CardTitle className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">Pipeline Breakdown</CardTitle>
         </CardHeader>
-        <CardContent className="h-64 flex items-center justify-center relative">
+        <CardContent className="h-64 flex items-center justify-center relative z-10 p-6">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -51,36 +52,39 @@ export function CRMAnalyticsCharts({ users }: { users: UserData[] }) {
                 outerRadius={80}
                 paddingAngle={5}
                 dataKey="value"
+                stroke="rgba(255,255,255,0.2)"
+                strokeWidth={2}
               >
                 {statusData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={PIE_COLORS[entry.name as keyof typeof PIE_COLORS] || '#cbd5e1'} />
                 ))}
               </Pie>
               <Tooltip 
-                contentStyle={{ borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', backgroundColor: 'var(--tooltip-bg, rgba(255,255,255,0.9))', color: 'var(--tooltip-text, #111827)' }}
-                itemStyle={{ color: 'var(--tooltip-text, #111827)' }}
+                contentStyle={{ borderRadius: '16px', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 10px 30px -3px rgb(0 0 0 / 0.1)', backgroundColor: 'var(--tooltip-bg, rgba(255,255,255,0.7))', backdropFilter: 'blur(16px)', color: 'var(--tooltip-text, #111827)' }}
+                itemStyle={{ color: 'var(--tooltip-text, #111827)', fontWeight: 'bold' }}
               />
             </PieChart>
           </ResponsiveContainer>
           
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{users.length}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Total</p>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none drop-shadow-sm mt-3">
+            <p className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 tracking-tight">{users.length}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mt-1">Total</p>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-2xl border-white/50 dark:border-gray-800 shadow-lg shadow-blue-900/5 dark:shadow-none">
-        <CardHeader className="flex flex-row items-center gap-3 pb-2">
-          <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400"><TrendingUp className="h-4 w-4" /></div>
-          <CardTitle className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">User Growth (30 Days)</CardTitle>
+      <Card className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-3xl border border-white/60 dark:border-gray-800/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:shadow-[0_8px_30px_rgb(37,99,235,0.1)] transition-all duration-300 relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <CardHeader className="flex flex-row items-center gap-3 pb-2 relative z-10 border-b border-white/30 dark:border-gray-700/30">
+          <div className="p-2.5 bg-blue-100/50 dark:bg-blue-900/30 rounded-2xl text-blue-600 dark:text-blue-400 backdrop-blur-md shadow-sm border border-white/50 dark:border-blue-800/50"><TrendingUp className="h-4 w-4" /></div>
+          <CardTitle className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">User Growth (30 Days)</CardTitle>
         </CardHeader>
-        <CardContent className="h-64">
+        <CardContent className="h-64 relative z-10 p-6">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={growthData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3}/>
+                  <stop offset="5%" stopColor="#2563eb" stopOpacity={0.4}/>
                   <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
                 </linearGradient>
               </defs>

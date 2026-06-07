@@ -42,8 +42,8 @@ export function CRMCommandPalette({
 
   return (
     <>
-      <p className="text-sm text-gray-500 hidden xl:flex items-center gap-1 bg-white/50 px-3 py-1.5 rounded-lg border border-gray-100 shadow-sm">
-        Press <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100"><span className="text-xs">⌘</span>K</kbd> for command palette
+      <p className="text-sm font-medium text-gray-500 dark:text-gray-400 hidden xl:flex items-center gap-1.5 bg-white/40 dark:bg-gray-900/40 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/60 dark:border-gray-800/60 shadow-[0_2px_10px_rgb(0,0,0,0.02)] transition-colors hover:bg-white/60 dark:hover:bg-gray-800/60">
+        Press <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-1.5 font-mono text-[10px] font-bold text-gray-600 dark:text-gray-300 shadow-sm"><span className="text-xs">⌘</span>K</kbd> for command palette
       </p>
 
       <CommandDialog open={open} onOpenChange={setOpen}>

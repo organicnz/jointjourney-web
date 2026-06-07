@@ -27,25 +27,26 @@ function SortableUserCard({ user, onClick }: { user: UserData, onClick: (u: User
       {...attributes}
       {...listeners}
       onClick={() => onClick(user)}
-      className="bg-white/90 dark:bg-gray-900/90 backdrop-blur border border-gray-100 dark:border-gray-800 p-4 rounded-xl shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing transition-shadow mb-3 group"
+      className="bg-white/40 dark:bg-gray-800/40 hover:bg-white/70 dark:hover:bg-gray-800/70 backdrop-blur-xl border border-white/60 dark:border-gray-700/60 p-4 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(37,99,235,0.08)] cursor-grab active:cursor-grabbing transition-all duration-300 mb-3 group relative overflow-hidden"
     >
-      <div className="flex items-center gap-2 mb-2">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/40 dark:to-blue-900/20 border border-blue-100 dark:border-blue-800 flex items-center justify-center flex-shrink-0">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="flex items-center gap-2 mb-2 relative z-10">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/40 dark:to-blue-900/20 border border-white dark:border-gray-700 flex items-center justify-center flex-shrink-0 shadow-sm">
           <span className="text-blue-700 dark:text-blue-400 font-bold text-xs uppercase">{user.email?.charAt(0) || '?'}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate" title={user.email}>{user.email}</p>
+          <p className="text-sm font-bold text-gray-900 dark:text-gray-100 truncate tracking-tight" title={user.email}>{user.email}</p>
         </div>
         <div onClick={(e) => e.stopPropagation()}>
           <DropdownMenu>
-            <DropdownMenuTrigger className="p-1 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none">
+            <DropdownMenuTrigger className="p-1 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-colors focus:outline-none">
               <MoreVertical className="w-4 h-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40 rounded-xl dark:border-gray-800">
-              <DropdownMenuItem onClick={() => onClick(user)} className="cursor-pointer dark:focus:bg-gray-800">
+            <DropdownMenuContent align="end" className="w-40 rounded-xl dark:border-gray-800 shadow-xl backdrop-blur-md bg-white/90 dark:bg-gray-900/90">
+              <DropdownMenuItem onClick={() => onClick(user)} className="cursor-pointer dark:focus:bg-gray-800 rounded-lg">
                 <ExternalLink className="w-4 h-4 mr-2" /> View Profile
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => window.location.href = `mailto:${user.email}`} className="cursor-pointer dark:focus:bg-gray-800">
+              <DropdownMenuItem onClick={() => window.location.href = `mailto:${user.email}`} className="cursor-pointer dark:focus:bg-gray-800 rounded-lg">
                 <Mail className="w-4 h-4 mr-2" /> Email User
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -54,19 +55,19 @@ function SortableUserCard({ user, onClick }: { user: UserData, onClick: (u: User
       </div>
       
       {user.special_skills && (
-        <div className="mt-3">
+        <div className="mt-3 relative z-10">
           <CRMBadgeList tagsString={user.special_skills} />
         </div>
       )}
       
-      <div className="mt-3 flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
+      <div className="mt-3 flex items-center justify-between text-xs font-medium text-gray-400 dark:text-gray-500 relative z-10">
         <div className="flex items-center gap-1" title="Joined">
-          <Clock className="w-3 h-3" />
+          <Clock className="w-3.5 h-3.5" />
           {new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
         </div>
         {user.crm_notes && (
           <div className="flex items-center gap-1 text-blue-500" title="Has notes">
-            <Mail className="w-3 h-3" /> Note
+            <Mail className="w-3.5 h-3.5" /> Note
           </div>
         )}
       </div>
@@ -77,10 +78,10 @@ function SortableUserCard({ user, onClick }: { user: UserData, onClick: (u: User
 // --- COLUMN COMPONENT ---
 function KanbanColumn({ id, title, users, openUserProfile }: { id: string, title: string, users: UserData[], openUserProfile: (u: UserData) => void }) {
   return (
-    <div className="flex flex-col flex-1 min-w-[280px] max-w-[320px] bg-gray-50/50 dark:bg-gray-900/30 backdrop-blur-xl border border-white/50 dark:border-gray-800/50 rounded-2xl p-4 shadow-sm h-[70vh] overflow-hidden">
-      <div className="flex items-center justify-between mb-4 px-1">
-        <h3 className="font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider text-sm">{title}</h3>
-        <span className="bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs font-bold px-2 py-1 rounded-md shadow-sm border border-gray-100 dark:border-gray-700">{users.length}</span>
+    <div className="flex flex-col flex-1 min-w-[280px] max-w-[320px] bg-white/20 dark:bg-gray-900/20 backdrop-blur-2xl border border-white/40 dark:border-gray-700/40 rounded-3xl p-4 shadow-[0_8px_30px_rgb(0,0,0,0.02)] h-[70vh] overflow-hidden">
+      <div className="flex items-center justify-between mb-4 px-2">
+        <h3 className="font-bold text-gray-800 dark:text-gray-200 uppercase tracking-widest text-xs">{title}</h3>
+        <span className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md text-gray-600 dark:text-gray-300 text-xs font-extrabold px-2.5 py-1 rounded-lg shadow-sm border border-white/50 dark:border-gray-700/50">{users.length}</span>
       </div>
       
       <div className="flex-1 overflow-y-auto no-scrollbar pb-10 px-1">
@@ -176,12 +177,12 @@ export function CRMKanbanBoard({
 
         <DragOverlay>
           {activeUser ? (
-            <div className="bg-white/90 backdrop-blur border border-blue-500 p-4 rounded-xl shadow-2xl opacity-90 rotate-2 scale-105">
+            <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-3xl border border-blue-400 dark:border-blue-500 p-4 rounded-2xl shadow-[0_20px_60px_rgb(37,99,235,0.2)] opacity-100 rotate-3 scale-105 transition-all">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                  <span className="text-blue-700 font-bold text-xs uppercase">{activeUser.email?.charAt(0) || '?'}</span>
+                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center border border-white dark:border-gray-700 shadow-sm">
+                  <span className="text-blue-700 dark:text-blue-400 font-bold text-xs uppercase">{activeUser.email?.charAt(0) || '?'}</span>
                 </div>
-                <p className="text-sm font-semibold text-gray-900 truncate">{activeUser.email}</p>
+                <p className="text-sm font-bold text-gray-900 dark:text-gray-100 truncate tracking-tight">{activeUser.email}</p>
               </div>
             </div>
           ) : null}
