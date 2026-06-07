@@ -35,10 +35,10 @@ export function CRMAnalyticsCharts({ users }: { users: UserData[] }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-      <Card className="bg-white/60 backdrop-blur-2xl border-white/50 shadow-lg shadow-blue-900/5">
+      <Card className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-2xl border-white/50 dark:border-gray-800 shadow-lg shadow-blue-900/5 dark:shadow-none">
         <CardHeader className="flex flex-row items-center gap-3 pb-2">
-          <div className="p-2 bg-purple-50 rounded-xl text-purple-600"><PieChartIcon className="h-4 w-4" /></div>
-          <CardTitle className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Pipeline Breakdown</CardTitle>
+          <div className="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-xl text-purple-600 dark:text-purple-400"><PieChartIcon className="h-4 w-4" /></div>
+          <CardTitle className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Pipeline Breakdown</CardTitle>
         </CardHeader>
         <CardContent className="h-64 flex items-center justify-center relative">
           <ResponsiveContainer width="100%" height="100%">
@@ -57,22 +57,23 @@ export function CRMAnalyticsCharts({ users }: { users: UserData[] }) {
                 ))}
               </Pie>
               <Tooltip 
-                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                contentStyle={{ borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', backgroundColor: 'var(--tooltip-bg, rgba(255,255,255,0.9))', color: 'var(--tooltip-text, #111827)' }}
+                itemStyle={{ color: 'var(--tooltip-text, #111827)' }}
               />
             </PieChart>
           </ResponsiveContainer>
           
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-            <p className="text-2xl font-bold text-gray-900">{users.length}</p>
-            <p className="text-xs text-gray-500 font-medium">Total</p>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{users.length}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Total</p>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="bg-white/60 backdrop-blur-2xl border-white/50 shadow-lg shadow-blue-900/5">
+      <Card className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-2xl border-white/50 dark:border-gray-800 shadow-lg shadow-blue-900/5 dark:shadow-none">
         <CardHeader className="flex flex-row items-center gap-3 pb-2">
-          <div className="p-2 bg-blue-50 rounded-xl text-blue-600"><TrendingUp className="h-4 w-4" /></div>
-          <CardTitle className="text-sm font-semibold text-gray-700 uppercase tracking-wider">User Growth (30 Days)</CardTitle>
+          <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400"><TrendingUp className="h-4 w-4" /></div>
+          <CardTitle className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">User Growth (30 Days)</CardTitle>
         </CardHeader>
         <CardContent className="h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -83,12 +84,13 @@ export function CRMAnalyticsCharts({ users }: { users: UserData[] }) {
                   <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <XAxis dataKey="date" tick={{fontSize: 10}} tickLine={false} axisLine={false} minTickGap={20} />
-              <YAxis tick={{fontSize: 10}} tickLine={false} axisLine={false} />
+              <XAxis dataKey="date" tick={{fontSize: 10, fill: '#64748b'}} tickLine={false} axisLine={false} minTickGap={20} />
+              <YAxis tick={{fontSize: 10, fill: '#64748b'}} tickLine={false} axisLine={false} />
               <Tooltip 
-                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                contentStyle={{ borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', backgroundColor: 'var(--tooltip-bg, rgba(255,255,255,0.9))', color: 'var(--tooltip-text, #111827)' }}
+                itemStyle={{ color: 'var(--tooltip-text, #111827)' }}
               />
-              <Area type="monotone" dataKey="users" stroke="#2563eb" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" />
+              <Area type="monotone" dataKey="users" stroke="#2563eb" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" isAnimationActive={true} />
             </AreaChart>
           </ResponsiveContainer>
         </CardContent>
