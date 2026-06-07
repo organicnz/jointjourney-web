@@ -12,8 +12,6 @@ import { Loader2, Mail, Send, FileText } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
-
 export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<string>, onSent: () => void }) {
   const [subject, setSubject] = useState("")
   const [message, setMessage] = useState("")
@@ -58,14 +56,7 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
     }
   }
 
-  const quillModules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      ['link', 'clean']
-    ],
-  }
+
 
   return (
     <div className="bg-white/70 backdrop-blur-2xl border border-white/80 rounded-3xl shadow-xl shadow-blue-900/5 overflow-hidden h-fit sticky top-24">
@@ -110,12 +101,11 @@ export function CRMEmailComposer({ selectedIds, onSent }: { selectedIds: Set<str
         <div className="space-y-2">
           <Label htmlFor="message" className="text-gray-700 font-semibold ml-1">Message Body</Label>
           <div className="bg-white rounded-xl border border-gray-200/80 overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-blue-500/30 transition-shadow">
-            <ReactQuill 
-              theme="snow"
-              value={message} 
-              onChange={setMessage} 
-              modules={quillModules}
-              className="h-[280px] border-none"
+            <textarea
+              value={message}
+              onChange={e => setMessage(e.target.value)}
+              className="w-full h-[280px] p-4 border-none focus:outline-none resize-none"
+              placeholder="Write your message here. You can use simple HTML like <b>bold</b> or <br> for newlines."
             />
           </div>
         </div>
